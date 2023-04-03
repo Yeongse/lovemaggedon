@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import './registerPage.dart';
+import 'package:provider/provider.dart';
+import 'cameraPage.dart';
+import './members.dart';
 
 class GuidePage extends StatelessWidget {
   const GuidePage({Key? key, required this.sex}) : super(key: key);
@@ -9,7 +11,10 @@ class GuidePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final deviceSize = MediaQuery.of(context).size;
+    final members = Provider.of<Members>(context);
+
     String sexString = sex == 'male' ? '男性' : '女性';
+    int index = sex == 'male' ? members.maleIndex : members.femaleIndex;
 
     return Scaffold(
         appBar: AppBar(),
@@ -34,7 +39,9 @@ class GuidePage extends StatelessWidget {
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => RegisterPage()),
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            CameraPage(index: index, sex: sex)),
                   );
                 }),
           ],
