@@ -18,7 +18,6 @@ class _SettingPageState extends State<SettingPage> {
   @override
   Widget build(BuildContext context) {
     final members = Provider.of<Members>(context);
-    // print(members.maleNum);
 
     return Scaffold(
         appBar: AppBar(),
@@ -31,7 +30,7 @@ class _SettingPageState extends State<SettingPage> {
                     children: [
                       Container(
                           alignment: Alignment.center,
-                          child: Text('男性の人数を入力してね')),
+                          child: const Text('男性の人数を入力してね')),
                       Container(
                         alignment: Alignment.center,
                         child: DropdownButton(
@@ -58,7 +57,7 @@ class _SettingPageState extends State<SettingPage> {
                     children: [
                       Container(
                           alignment: Alignment.center,
-                          child: Text('女性の人数を入力してね')),
+                          child: const Text('女性の人数を入力してね')),
                       Container(
                         alignment: Alignment.center,
                         child: DropdownButton(
@@ -89,14 +88,14 @@ class _SettingPageState extends State<SettingPage> {
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) =>
-                                        GuidePage(sex: 'male')),
+                                        const GuidePage(sex: 'male')),
                               );
                             }),
                       )
                     ],
                   ))
             ],
-          ), // This trailing comma makes auto-formatting nicer for build methods.
+          ),
         ));
   }
 }

@@ -25,7 +25,7 @@ class GuidePage extends StatelessWidget {
               alignment: Alignment.center,
               child: Text(
                 'まずは$sexStringの皆さんの登録です',
-                style: TextStyle(
+                style: const TextStyle(
                     fontFamily: 'Bebas Neue',
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
