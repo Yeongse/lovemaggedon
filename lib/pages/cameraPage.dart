@@ -1,17 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 import 'dart:async';
-import 'dart:io';
+import './registerPage.dart';
 
 class CameraPage extends StatefulWidget {
-  const CameraPage(
-      {super.key,
-      required this.camera,
-      required this.index,
-      required this.sex});
+  const CameraPage({super.key, required this.camera});
   final CameraDescription camera;
-  final int index;
-  final String sex;
 
   @override
   CameraPageState createState() => CameraPageState();
@@ -39,16 +33,12 @@ class CameraPageState extends State<CameraPage> {
 
   @override
   Widget build(BuildContext context) {
-    String sexString = widget.sex == 'male' ? '男性' : '女性';
     return Scaffold(
       appBar: AppBar(),
       body: Center(
           child: Column(
         children: [
-          Container(
-              alignment: Alignment.center,
-              child: Text('$sexStringの$widget.index番目の人の登録です。')),
-          Container(alignment: Alignment.center, child: Text('自撮りを登録してください。')),
+          Container(alignment: Alignment.center, child: const Text('自撮りをしてね')),
           FutureBuilder<void>(
             future: _initializeControllerFuture,
             builder: (context, snapshot) {
@@ -69,7 +59,7 @@ class CameraPageState extends State<CameraPage> {
             if (!mounted) return;
             await Navigator.of(context).push(
               MaterialPageRoute(
-                builder: (context) => DisplayPictureScreen(
+                builder: (context) => RegisterPage(
                   imagePath: image.path,
                 ),
               ),
@@ -80,20 +70,6 @@ class CameraPageState extends State<CameraPage> {
         },
         child: const Icon(Icons.camera_alt),
       ),
-    );
-  }
-}
-
-class DisplayPictureScreen extends StatelessWidget {
-  final String imagePath;
-
-  const DisplayPictureScreen({super.key, required this.imagePath});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Display the Picture')),
-      body: Image.file(File(imagePath)),
     );
   }
 }

@@ -11,14 +11,12 @@ class SettingPage extends StatefulWidget {
 }
 
 class _SettingPageState extends State<SettingPage> {
-  List<int> memberNum = [1, 2, 3, 4, 5, 6];
-  int maleNum = 1;
-  int femaleNum = 1;
+  List<int> memberNumLists = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+  int memberNum = 2;
 
   @override
   Widget build(BuildContext context) {
     return Consumer(builder: (context, ref, child) {
-      // final count = ref.watch(counterProvider);
       return Scaffold(
           appBar: AppBar(),
           body: Center(
@@ -30,12 +28,12 @@ class _SettingPageState extends State<SettingPage> {
                       children: [
                         Container(
                             alignment: Alignment.center,
-                            child: const Text('男性の人数を入力してね')),
+                            child: const Text('参加する人数を入力してね(男女合計)')),
                         Container(
                           alignment: Alignment.center,
                           child: DropdownButton(
-                            value: maleNum,
-                            items: memberNum
+                            value: memberNum,
+                            items: memberNumLists
                                 .map<DropdownMenuItem<int>>((int number) {
                               return DropdownMenuItem<int>(
                                 value: number,
@@ -44,34 +42,7 @@ class _SettingPageState extends State<SettingPage> {
                             }).toList(),
                             onChanged: (newNumber) {
                               setState(() {
-                                maleNum = newNumber as int;
-                              });
-                            },
-                          ),
-                        )
-                      ],
-                    )),
-                Container(
-                    alignment: Alignment.center,
-                    child: Column(
-                      children: [
-                        Container(
-                            alignment: Alignment.center,
-                            child: const Text('女性の人数を入力してね')),
-                        Container(
-                          alignment: Alignment.center,
-                          child: DropdownButton(
-                            value: femaleNum,
-                            items: memberNum
-                                .map<DropdownMenuItem<int>>((int number) {
-                              return DropdownMenuItem<int>(
-                                value: number,
-                                child: Text(number.toString() + '人'),
-                              );
-                            }).toList(),
-                            onChanged: (newNumber) {
-                              setState(() {
-                                femaleNum = newNumber as int;
+                                memberNum = newNumber as int;
                               });
                             },
                           ),
@@ -81,15 +52,12 @@ class _SettingPageState extends State<SettingPage> {
                           child: ElevatedButton(
                               child: const Text('参加人数を確定する'),
                               onPressed: () {
-                                ref.read(maleNumProvider.notifier).state =
-                                    maleNum;
-                                ref.read(femaleNumProvider.notifier).state =
-                                    femaleNum;
+                                ref.read(memberNumProvider.notifier).state =
+                                    memberNum;
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) =>
-                                          const GuidePage(sex: 'male')),
+                                      builder: (context) => const GuidePage()),
                                 );
                               }),
                         )
