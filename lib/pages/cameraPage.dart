@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:camera/camera.dart';
 import 'dart:async';
 import 'dart:io';
-import '../providers.dart';
 
 class CameraPage extends StatefulWidget {
   const CameraPage(
@@ -49,7 +47,7 @@ class CameraPageState extends State<CameraPage> {
         children: [
           Container(
               alignment: Alignment.center,
-              child: Text('まずは$sexStringの$widget.index番目の人の登録です。')),
+              child: Text('$sexStringの$widget.index番目の人の登録です。')),
           Container(alignment: Alignment.center, child: Text('自撮りを登録してください。')),
           FutureBuilder<void>(
             future: _initializeControllerFuture,
