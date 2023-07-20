@@ -5,9 +5,17 @@ import '../models/member.dart';
 import '../providers.dart';
 import './guidePage.dart';
 
-class RegisterPage extends StatelessWidget {
+class RegisterPage extends StatefulWidget {
   final String imagePath;
-  const RegisterPage({super.key, required this.imagePath});
+  const RegisterPage({Key? key, required this.imagePath}) : super(key: key);
+
+  @override
+  _RegisterPageState createState() => _RegisterPageState();
+}
+
+class _RegisterPageState extends State<RegisterPage> {
+  String name = "";
+  String sex = "";
 
   @override
   Widget build(BuildContext context) {
@@ -15,8 +23,6 @@ class RegisterPage extends StatelessWidget {
       final deviceSize = MediaQuery.of(context).size;
       final int index = ref.watch(memberIndexProvider);
       final List<String> sexes = ['男の子', '女の子'];
-      String name = "";
-      String sex = "";
 
       return Scaffold(
           resizeToAvoidBottomInset: true,
@@ -63,10 +69,10 @@ class RegisterPage extends StatelessWidget {
                     },
                   ),
                 ),
-                Container(
+                SizedBox(
                   width: 300,
                   height: 400,
-                  child: Image.file(File(imagePath)),
+                  child: Image.file(File(widget.imagePath)),
                 ),
                 SizedBox(
                   width: deviceSize.width * 0.6,
@@ -89,23 +95,51 @@ class RegisterPage extends StatelessWidget {
                         ),
                       ),
                       onChanged: (text) {
-                        name = text;
+                        setState(() {
+                          name = text;
+                        });
                       },
                     ),
                   ),
                 ),
                 Container(
+                  width: deviceSize.width * 0.6,
                   alignment: Alignment.center,
-                  child: DropdownButton(
-                    value: sexes[0],
+                  child: DropdownButtonFormField<String>(
+                    decoration: InputDecoration(
+                      labelText: '性別を選択',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 15),
+                      errorStyle: const TextStyle(
+                          color: Colors.redAccent, fontSize: 12),
+                    ),
+                    dropdownColor: Colors.white,
+                    value: sex.isEmpty ? null : sex,
+                    hint: const Text('性別を選択してください'),
+                    icon: const Icon(Icons.arrow_drop_down,
+                        color: Colors.blueGrey),
                     items: sexes.map<DropdownMenuItem<String>>((String sex) {
                       return DropdownMenuItem<String>(
                         value: sex,
-                        child: Text(sex),
+                        child: Text(
+                          sex,
+                          style: TextStyle(color: Colors.black87),
+                        ),
                       );
                     }).toList(),
                     onChanged: (newSex) {
-                      sex = newSex!;
+                      setState(() {
+                        sex = newSex!;
+                      });
+                    },
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return '性別を選択してください';
+                      }
+                      return null;
                     },
                   ),
                 ),
@@ -130,16 +164,14 @@ class RegisterPage extends StatelessWidget {
                               TextButton(
                                 child: const Text('OK'),
                                 onPressed: () {
-                                  final Member member =
-                                      Member(index, sex, name, imagePath);
-                                  // 新メンバーの追加
+                                  final Member member = Member(
+                                      index, sex, name, widget.imagePath);
                                   ref
                                       .read(membersProvider.notifier)
                                       .update((state) {
                                     state.add(member);
                                     return state;
                                   });
-                                  // インデックスの一個ずらし
                                   ref
                                       .read(memberIndexProvider.notifier)
                                       .update((state) => state + 1);
