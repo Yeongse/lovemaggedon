@@ -12,74 +12,89 @@ class GuidePage extends StatelessWidget {
     return Consumer(builder: (context, ref, child) {
       final deviceSize = MediaQuery.of(context).size;
       final int index = ref.watch(memberIndexProvider);
-      if (index > ref.watch(memberNumProvider)) {
+
+      Widget buildScaffold(String text, Function onPressed) {
         return Scaffold(
-            appBar: AppBar(),
-            body: Center(
-                child: Column(
-              children: [
-                Container(
-                  alignment: Alignment.center,
-                  width: deviceSize.width,
-                  height: deviceSize.height * 0.1,
-                  child: const Text(
-                    '全員の登録が完了したよ！お疲れさま！',
-                    style: TextStyle(
+          appBar: AppBar(
+            automaticallyImplyLeading: false,
+          ),
+          body: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    alignment: Alignment.center,
+                    width: deviceSize.width,
+                    child: Text(
+                      text,
+                      style: const TextStyle(
                         fontFamily: 'Bebas Neue',
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
-                        color: Colors.red),
+                        color: Colors.red,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
                   ),
-                ),
-                ElevatedButton(
+                  const SizedBox(height: 40.0),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.deepPurple,
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 50, vertical: 15),
+                      textStyle: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                    ),
+                    onPressed: onPressed as void Function()?,
                     child: const Text('次に進む'),
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => AllMembersPage()),
-                      );
-                    }),
-              ],
-            )));
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      }
+
+      if (index > ref.watch(memberNumProvider)) {
+        return buildScaffold(
+          '全員の登録が完了したよ！お疲れさま！',
+          () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => AllMembersPage()),
+            );
+          },
+        );
       } else {
         return ref.watch(cameraProvider).when(
               data: (camera) {
-                return Scaffold(
-                    appBar: AppBar(),
-                    body: Center(
-                        child: Column(
-                      children: [
-                        Container(
-                          alignment: Alignment.center,
-                          width: deviceSize.width,
-                          height: deviceSize.height * 0.1,
-                          child: Text(
-                            '$index番目の参加者の登録に移ります(ボタンを押すと画面が変わるよ)',
-                            style: const TextStyle(
-                                fontFamily: 'Bebas Neue',
-                                fontSize: 24,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.red),
-                          ),
-                        ),
-                        ElevatedButton(
-                            child: const Text('登録に進む'),
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        CameraPage(camera: camera)),
-                              );
-                            }),
-                      ],
-                    )));
+                return buildScaffold(
+                  '$index番目の参加者を登録するよ!',
+                  () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => CameraPage(camera: camera),
+                      ),
+                    );
+                  },
+                );
               },
               loading: () {
-                return const CircularProgressIndicator();
+                return const Scaffold(
+                  body: Center(child: CircularProgressIndicator()),
+                );
               },
-              error: (err, stack) => Text('Error: $err'),
+              error: (err, stack) => Scaffold(
+                body: Center(child: Text('Error: $err')),
+              ),
             );
       }
     });

@@ -8,42 +8,67 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final deviceSize = MediaQuery.of(context).size;
-
     return Scaffold(
-        appBar: AppBar(),
-        body: Center(
-            child: Column(
-          children: [
-            Container(
-              alignment: Alignment.center,
-              child: Text('飲み会で気になる男女をマッチング⁈', style: TextStyle()),
-              width: deviceSize.width,
-              height: deviceSize.height * 0.05,
-              margin: EdgeInsets.only(top: 20),
-            ),
-            Container(
-              alignment: Alignment.center,
-              width: deviceSize.width,
-              height: deviceSize.height * 0.1,
-              child: const Text(
+      appBar: AppBar(
+        title: Text(
+          title,
+          style: TextStyle(color: Colors.white),
+        ),
+        centerTitle: true,
+      ),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+        child: Center(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Text(
+                '飲み会で気になる男女をマッチング⁈',
+                style: TextStyle(
+                  fontSize: 18.0,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.black54,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 20.0),
+              const Text(
                 'ラブマゲドン!!',
                 style: TextStyle(
-                    fontFamily: 'Bebas Neue',
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.red),
+                  fontFamily: 'Bebas Neue',
+                  fontSize: 36,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.red,
+                ),
               ),
-            ),
-            ElevatedButton(
+              const SizedBox(height: 40.0),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.deepPurple,
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                  textStyle: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                ),
                 child: const Text('マッチングを始める'),
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => SettingPage()),
+                    MaterialPageRoute(
+                        builder: (context) => const SettingPage()),
                   );
-                }),
-          ],
-        )));
+                },
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }

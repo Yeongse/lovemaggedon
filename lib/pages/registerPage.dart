@@ -27,15 +27,31 @@ class _RegisterPageState extends State<RegisterPage> {
       return Scaffold(
           resizeToAvoidBottomInset: true,
           appBar: AppBar(
+            title: const Text("登録"),
+            centerTitle: true,
+            backgroundColor: Colors.deepPurple,
             automaticallyImplyLeading: false,
           ),
           body: SingleChildScrollView(
-            child: Center(
-                child: Column(
-              children: [
-                Container(
-                  alignment: Alignment.center,
-                  child: ElevatedButton(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Center(
+                  child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.deepPurple,
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 50, vertical: 15),
+                      textStyle: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                    ),
                     child: const Text('撮り直す'),
                     onPressed: () async {
                       final shouldNavigate = await showDialog(
@@ -68,32 +84,30 @@ class _RegisterPageState extends State<RegisterPage> {
                       }
                     },
                   ),
-                ),
-                SizedBox(
-                  width: 300,
-                  height: 400,
-                  child: Image.file(File(widget.imagePath)),
-                ),
-                SizedBox(
-                  width: deviceSize.width * 0.6,
-                  child: Padding(
-                    padding: const EdgeInsets.only(top: 16.0, bottom: 16.0),
+                  const SizedBox(height: 16),
+                  SizedBox(
+                    width: 270,
+                    height: 360,
+                    child: Image.file(File(widget.imagePath)),
+                  ),
+                  const SizedBox(height: 16),
+                  SizedBox(
+                    width: deviceSize.width * 0.6,
                     child: TextField(
                       decoration: InputDecoration(
-                        labelText: '名前を入力してね',
-                        prefixIcon: const Icon(Icons.person),
-                        border: const OutlineInputBorder(),
-                        filled: true,
-                        fillColor: Colors.grey[200],
-                        enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.grey[400]!),
-                          borderRadius: BorderRadius.circular(8.0),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: const BorderSide(color: Colors.blue),
-                          borderRadius: BorderRadius.circular(8.0),
-                        ),
-                      ),
+                          labelText: '名前を入力してね',
+                          prefixIcon: const Icon(Icons.person),
+                          border: const OutlineInputBorder(),
+                          filled: true,
+                          fillColor: Colors.grey[200],
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.grey[400]!),
+                            borderRadius: BorderRadius.circular(8.0),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: const BorderSide(color: Colors.blue),
+                            borderRadius: BorderRadius.circular(8.0),
+                          )),
                       onChanged: (text) {
                         setState(() {
                           name = text;
@@ -101,51 +115,61 @@ class _RegisterPageState extends State<RegisterPage> {
                       },
                     ),
                   ),
-                ),
-                Container(
-                  width: deviceSize.width * 0.6,
-                  alignment: Alignment.center,
-                  child: DropdownButtonFormField<String>(
-                    decoration: InputDecoration(
-                      labelText: '性別を選択',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                      ),
-                      contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 12, vertical: 15),
-                      errorStyle: const TextStyle(
-                          color: Colors.redAccent, fontSize: 12),
-                    ),
-                    dropdownColor: Colors.white,
-                    value: sex.isEmpty ? null : sex,
-                    hint: const Text('性別を選択してください'),
-                    icon: const Icon(Icons.arrow_drop_down,
-                        color: Colors.blueGrey),
-                    items: sexes.map<DropdownMenuItem<String>>((String sex) {
-                      return DropdownMenuItem<String>(
-                        value: sex,
-                        child: Text(
-                          sex,
-                          style: TextStyle(color: Colors.black87),
+                  const SizedBox(height: 16),
+                  SizedBox(
+                    width: deviceSize.width * 0.6,
+                    child: DropdownButtonFormField<String>(
+                      decoration: InputDecoration(
+                        labelText: '性別を選択してね',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8.0),
                         ),
-                      );
-                    }).toList(),
-                    onChanged: (newSex) {
-                      setState(() {
-                        sex = newSex!;
-                      });
-                    },
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return '性別を選択してください';
-                      }
-                      return null;
-                    },
+                        contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 15),
+                        errorStyle: const TextStyle(
+                            color: Colors.redAccent, fontSize: 12),
+                      ),
+                      dropdownColor: Colors.white,
+                      value: sex.isEmpty ? null : sex,
+                      hint: const Text('性別を選択してください'),
+                      icon: const Icon(Icons.arrow_drop_down,
+                          color: Colors.blueGrey),
+                      items: sexes.map<DropdownMenuItem<String>>((String sex) {
+                        return DropdownMenuItem<String>(
+                          value: sex,
+                          child: Text(
+                            sex,
+                            style: const TextStyle(color: Colors.black87),
+                          ),
+                        );
+                      }).toList(),
+                      onChanged: (newSex) {
+                        setState(() {
+                          sex = newSex!;
+                        });
+                      },
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return '性別を選択してください';
+                        }
+                        return null;
+                      },
+                    ),
                   ),
-                ),
-                Container(
-                  alignment: Alignment.center,
-                  child: ElevatedButton(
+                  const SizedBox(height: 24),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.deepPurple,
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 50, vertical: 15),
+                      textStyle: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                    ),
                     child: const Text('登録する'),
                     onPressed: () {
                       showDialog(
@@ -188,10 +212,10 @@ class _RegisterPageState extends State<RegisterPage> {
                         },
                       );
                     },
-                  ),
-                )
-              ],
-            )),
+                  )
+                ],
+              )),
+            ),
           ));
     });
   }
