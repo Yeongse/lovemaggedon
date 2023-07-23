@@ -21,6 +21,7 @@ class CameraPageState extends State<CameraPage> {
     _controller = CameraController(
       widget.camera,
       ResolutionPreset.medium,
+      imageFormatGroup: ImageFormatGroup.bgra8888,
     );
     _initializeControllerFuture = _controller.initialize();
   }

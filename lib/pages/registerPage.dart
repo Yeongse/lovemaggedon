@@ -29,7 +29,6 @@ class _RegisterPageState extends State<RegisterPage> {
           appBar: AppBar(
             title: const Text("登録"),
             centerTitle: true,
-            backgroundColor: Colors.deepPurple,
             automaticallyImplyLeading: false,
           ),
           body: SingleChildScrollView(

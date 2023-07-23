@@ -13,7 +13,6 @@ class MemberComponent extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer(builder: (context, ref, child) {
       final deviceSize = MediaQuery.of(context).size;
-      ref.read(memberIndexProvider.notifier).update((state) => 1);
 
       return Padding(
         padding: const EdgeInsets.all(16.0),
@@ -82,6 +81,9 @@ class AllMembersPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Consumer(builder: (context, ref, child) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ref.read(memberIndexProvider.notifier).update((state) => 1);
+      });
       final allMembers = ref.watch(membersProvider);
       List<Member> males =
           allMembers.where((member) => member.sex == '男の子').toList();
