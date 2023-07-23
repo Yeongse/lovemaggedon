@@ -6,8 +6,8 @@ class Member {
   final String name;
   final String image;
 
-  void setLoveMember(Member member) {
-    loveMemberId = member.id;
+  void setLoveMember(int id) {
+    loveMemberId = id;
   }
 
   Member(this.id, this.sex, this.name, this.image) {}

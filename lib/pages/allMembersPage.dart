@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/member.dart';
 import '../providers.dart';
-import './ChoosePage.dart';
+import './matchGuidePage.dart';
 
 class MemberComponent extends StatelessWidget {
   final Member member;
@@ -162,7 +162,8 @@ class AllMembersPage extends StatelessWidget {
                     onPressed: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => ChoosePage()),
+                        MaterialPageRoute(
+                            builder: (context) => MatchGuidePage()),
                       );
                     },
                   ),
