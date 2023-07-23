@@ -188,23 +188,34 @@ class _RegisterPageState extends State<RegisterPage> {
                               TextButton(
                                 child: const Text('OK'),
                                 onPressed: () {
-                                  final Member member = Member(
-                                      index, sex, name, widget.imagePath);
-                                  ref
-                                      .read(membersProvider.notifier)
-                                      .update((state) {
-                                    state.add(member);
-                                    return state;
-                                  });
-                                  ref
-                                      .read(memberIndexProvider.notifier)
-                                      .update((state) => state + 1);
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            const GuidePage()),
-                                  );
+                                  if (sex.isEmpty || name.isEmpty) {
+                                    // sexまたはnameが空の場合、スナックバーを表示
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text('性別と名前を入力してください！'),
+                                        duration: Duration(seconds: 2),
+                                        backgroundColor: Colors.red,
+                                      ),
+                                    );
+                                  } else {
+                                    final Member member = Member(
+                                        index, sex, name, widget.imagePath);
+                                    ref
+                                        .read(membersProvider.notifier)
+                                        .update((state) {
+                                      state.add(member);
+                                      return state;
+                                    });
+                                    ref
+                                        .read(memberIndexProvider.notifier)
+                                        .update((state) => state + 1);
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              const GuidePage()),
+                                    );
+                                  }
                                 },
                               ),
                             ],
