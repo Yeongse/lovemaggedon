@@ -82,7 +82,7 @@ class AllMembersPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer(builder: (context, ref, child) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        ref.read(memberIndexProvider.notifier).update((state) => 1);
+        ref.read(memberIndexProvider.notifier).update((state) => 0);
       });
       final allMembers = ref.watch(membersProvider);
       List<Member> males =
@@ -163,7 +163,7 @@ class AllMembersPage extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => MatchGuidePage()),
+                            builder: (context) => const MatchGuidePage()),
                       );
                     },
                   ),

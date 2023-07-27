@@ -4,19 +4,35 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/member.dart';
 import '../providers.dart';
 
-class CouplingPage extends StatelessWidget {
+class CouplingPage extends StatefulWidget {
   const CouplingPage({Key? key}) : super(key: key);
+
+  @override
+  _CouplingPageState createState() => _CouplingPageState();
+}
+
+class _CouplingPageState extends State<CouplingPage> {
+  String name = "";
+  String sex = "";
 
   @override
   Widget build(BuildContext context) {
     return Consumer(builder: (context, ref, child) {
       final deviceSize = MediaQuery.of(context).size;
-      final int index = ref.watch(memberIndexProvider);
-      return Container(
-        alignment: Alignment.center,
-        width: deviceSize.width * 0.2,
-        height: deviceSize.height * 0.2,
-        child: const Text("Coming Soon"),
+      final allMembers = ref.watch(membersProvider);
+      for (var member in allMembers) {
+        print(member.loveMemberIndex);
+      }
+
+      return Scaffold(
+        appBar: AppBar(
+          title: const Text(
+            "マッチング",
+            style: TextStyle(color: Colors.white),
+          ),
+          centerTitle: true,
+        ),
+        body: const Text("Coming Soon"),
       );
     });
   }

@@ -64,7 +64,7 @@ class MatchGuidePage extends StatelessWidget {
         );
       }
 
-      if (index > ref.watch(memberNumProvider)) {
+      if (index >= ref.watch(memberNumProvider)) {
         return buildScaffold(
           '全員の登録が完了したよ！お疲れさま！',
           () {
@@ -75,7 +75,7 @@ class MatchGuidePage extends StatelessWidget {
           },
         );
       } else {
-        final Member chooser = allMembers[index - 1];
+        final Member chooser = allMembers[index];
         return ref.watch(cameraProvider).when(
               data: (camera) {
                 return buildScaffold(

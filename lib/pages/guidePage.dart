@@ -62,7 +62,7 @@ class GuidePage extends StatelessWidget {
         );
       }
 
-      if (index > ref.watch(memberNumProvider)) {
+      if (index >= ref.watch(memberNumProvider)) {
         return buildScaffold(
           '全員の登録が完了したよ！お疲れさま！',
           () {
@@ -76,7 +76,7 @@ class GuidePage extends StatelessWidget {
         return ref.watch(cameraProvider).when(
               data: (camera) {
                 return buildScaffold(
-                  '$index番目の参加者を登録するよ!',
+                  '${index + 1}番目の参加者を登録するよ!',
                   () {
                     Navigator.push(
                       context,

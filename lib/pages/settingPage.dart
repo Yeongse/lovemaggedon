@@ -62,7 +62,7 @@ class _SettingPageState extends State<SettingPage> {
                   style:
                       const TextStyle(color: Colors.deepPurple, fontSize: 16.0),
                 ),
-                SizedBox(height: 32.0),
+                const SizedBox(height: 32.0),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.deepPurple,

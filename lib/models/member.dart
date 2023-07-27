@@ -1,14 +1,14 @@
 class Member {
-  late int loveMemberId;
+  late int loveMemberIndex;
 
-  final int id;
+  final int index;
   final String sex;
   final String name;
   final String image;
 
-  void setLoveMember(int id) {
-    loveMemberId = id;
+  void setLoveMember(int index) {
+    loveMemberIndex = index;
   }
 
-  Member(this.id, this.sex, this.name, this.image) {}
+  Member(this.index, this.sex, this.name, this.image) {}
 }

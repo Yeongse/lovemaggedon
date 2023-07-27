@@ -82,7 +82,7 @@ class _LargeMemberRadioComponentState extends State<LargeMemberRadioComponent> {
                   ),
                 ),
                 Radio(
-                  value: widget.member.id,
+                  value: widget.member.index,
                   groupValue: selectedValue,
                   onChanged: (int? value) {
                     setState(() {
@@ -109,20 +109,19 @@ class ChoosePage extends StatefulWidget {
 }
 
 class _ChoosePageState extends State<ChoosePage> {
-  int? loveMemberId = -1;
+  int? loveMemberIndex = -1;
   // int? selectedValueInChoosePage;
 
   @override
   Widget build(BuildContext context) {
     return Consumer(builder: (context, ref, child) {
-      // final deviceSize = MediaQuery.of(context).size;
       final int index = ref.watch(memberIndexProvider);
       final allMembers = ref.watch(membersProvider);
       List<Member> males =
           allMembers.where((member) => member.sex == '男の子').toList();
       List<Member> females =
           allMembers.where((member) => member.sex == '女の子').toList();
-      final Member chooser = allMembers[index - 1];
+      final Member chooser = allMembers[index];
 
       return Scaffold(
           appBar: AppBar(
@@ -157,7 +156,7 @@ class _ChoosePageState extends State<ChoosePage> {
                               member: femaleMember,
                               onValueChanged: (value) {
                                 setState(() {
-                                  loveMemberId = value;
+                                  loveMemberIndex = value;
                                 });
                               },
                             ))
@@ -189,7 +188,7 @@ class _ChoosePageState extends State<ChoosePage> {
                           return AlertDialog(
                             title: const Text('確認'),
                             content: Text(
-                                '${allMembers[loveMemberId! - 1].name}さんで間違いないですか？'),
+                                '${allMembers[loveMemberIndex!].name}さんで間違いないですか？'),
                             actions: <Widget>[
                               TextButton(
                                 child: const Text('戻る'),
@@ -200,7 +199,7 @@ class _ChoosePageState extends State<ChoosePage> {
                               TextButton(
                                 child: const Text('OK'),
                                 onPressed: () {
-                                  if (loveMemberId == -1) {
+                                  if (loveMemberIndex == -1) {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(
                                         content: Text('相手を選んでください！'),
@@ -212,14 +211,13 @@ class _ChoosePageState extends State<ChoosePage> {
                                     ref
                                         .read(membersProvider.notifier)
                                         .update((state) {
-                                      state[index - 1]
-                                          .setLoveMember(loveMemberId!);
+                                      state[index]
+                                          .setLoveMember(loveMemberIndex!);
                                       return state;
                                     });
                                     ref
                                         .read(memberIndexProvider.notifier)
                                         .update((state) => state + 1);
-                                    print("updateOK");
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(

@@ -12,7 +12,7 @@ class HomePage extends StatelessWidget {
       appBar: AppBar(
         title: Text(
           title,
-          style: TextStyle(color: Colors.white),
+          style: const TextStyle(color: Colors.white),
         ),
         centerTitle: true,
       ),
@@ -24,7 +24,7 @@ class HomePage extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               const Text(
-                '飲み会で気になる男女をマッチング⁈',
+                '気になる男女をマッチング？！',
                 style: TextStyle(
                   fontSize: 18.0,
                   fontWeight: FontWeight.w600,
