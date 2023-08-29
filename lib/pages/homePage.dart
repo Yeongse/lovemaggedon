@@ -34,7 +34,7 @@ class HomePage extends StatelessWidget {
               ),
               const SizedBox(height: 20.0),
               const Text(
-                'ラブマゲドン!!',
+                'ドキドキマッチング!!',
                 style: TextStyle(
                   fontFamily: 'Bebas Neue',
                   fontSize: 36,
