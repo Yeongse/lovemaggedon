@@ -15,9 +15,8 @@ class MatchGuidePage extends StatelessWidget {
       final deviceSize = MediaQuery.of(context).size;
       final int index = ref.watch(memberIndexProvider);
       final allMembers = ref.watch(membersProvider);
-      Member chooser = allMembers[index];
 
-      Widget buildScaffold(String text, Function onPressed) {
+      Widget buildScaffold(Member chooser, String text, Function onPressed) {
         return Scaffold(
           appBar: AppBar(
             automaticallyImplyLeading: false,
@@ -74,20 +73,64 @@ class MatchGuidePage extends StatelessWidget {
       }
 
       if (index >= ref.watch(memberNumProvider)) {
-        return buildScaffold(
-          '全員の登録が完了したよ！お疲れさま！',
-          () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const CouplingPage()),
-            );
-          },
+        return Scaffold(
+          appBar: AppBar(
+            automaticallyImplyLeading: false,
+          ),
+          body: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    alignment: Alignment.center,
+                    width: deviceSize.width,
+                    child: const Text(
+                      '全員の登録が完了したよ！お疲れさま！',
+                      style: TextStyle(
+                        fontFamily: 'Bebas Neue',
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.red,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                  const SizedBox(height: 30.0),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.deepPurple,
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 50, vertical: 15),
+                      textStyle: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                    ),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const CouplingPage()),
+                      );
+                    },
+                    child: const Text('次に進む'),
+                  ),
+                ],
+              ),
+            ),
+          ),
         );
       } else {
         Member chooser = allMembers[index];
         return ref.watch(cameraProvider).when(
               data: (camera) {
                 return buildScaffold(
+                  chooser,
                   '${chooser.name}さん、気になる相手を選んでね♡',
                   () {
                     Navigator.push(

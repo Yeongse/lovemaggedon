@@ -7,12 +7,10 @@ import './matchGuidePage.dart';
 
 class LargeMemberRadioComponent extends StatefulWidget {
   final Member member;
-  final ValueChanged<int?> onValueChanged;
 
   const LargeMemberRadioComponent({
     Key? key,
     required this.member,
-    required this.onValueChanged,
   }) : super(key: key);
 
   @override
@@ -28,12 +26,15 @@ class _LargeMemberRadioComponentState extends State<LargeMemberRadioComponent> {
   Widget build(BuildContext context) {
     return Consumer(builder: (context, ref, child) {
       final deviceSize = MediaQuery.of(context).size;
+      final int index = ref.watch(memberIndexProvider);
+      final allMembers = ref.watch(membersProvider);
+      final Member chooser = allMembers[index];
 
       return Padding(
         padding: const EdgeInsets.all(16.0),
         child: Container(
           alignment: Alignment.center,
-          width: deviceSize.width * 0.60,
+          width: deviceSize.width * 0.80,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(15.0),
             boxShadow: const [
@@ -81,15 +82,65 @@ class _LargeMemberRadioComponentState extends State<LargeMemberRadioComponent> {
                     color: Colors.black87,
                   ),
                 ),
-                Radio(
-                  value: widget.member.index,
-                  groupValue: selectedValue,
-                  onChanged: (int? value) {
-                    setState(() {
-                      selectedValue = value;
-                    });
-                    widget.onValueChanged(value);
-                  },
+                Center(
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.deepPurple,
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 5, vertical: 3),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                    ),
+                    child: const Text(
+                      'この人に決める',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 12,
+                      ),
+                    ),
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: const Text('確認'),
+                            content: Text(
+                                '${chooser.name}さんが気になるのは${widget.member.name}さんなんだね？'),
+                            actions: <Widget>[
+                              TextButton(
+                                child: const Text('戻る'),
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                              ),
+                              TextButton(
+                                child: const Text('OK'),
+                                onPressed: () {
+                                  ref
+                                      .read(membersProvider.notifier)
+                                      .update((state) {
+                                    state[index]
+                                        .setLoveMember(widget.member.index);
+                                    return state;
+                                  });
+                                  ref
+                                      .read(memberIndexProvider.notifier)
+                                      .update((state) => state + 1);
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            const MatchGuidePage()),
+                                  );
+                                },
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    },
+                  ),
                 ),
               ],
             ),
@@ -152,86 +203,10 @@ class _ChoosePageState extends State<ChoosePage> {
                   scrollDirection: Axis.horizontal,
                   child: Row(
                     children: (chooser.sex == "男の子" ? females : males)
-                        .map((femaleMember) => LargeMemberRadioComponent(
-                              member: femaleMember,
-                              onValueChanged: (value) {
-                                setState(() {
-                                  loveMemberIndex = value;
-                                });
-                              },
+                        .map((member) => LargeMemberRadioComponent(
+                              member: member,
                             ))
                         .toList(),
-                  ),
-                ),
-                const SizedBox(height: 24.0),
-                Center(
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.deepPurple,
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 20, vertical: 12),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10.0),
-                      ),
-                    ),
-                    child: const Text(
-                      'この人に決める',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                      ),
-                    ),
-                    onPressed: () {
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            title: const Text('確認'),
-                            content: Text(
-                                '$chooserさんが気になるのは${allMembers[loveMemberIndex!].name}さんなんだね？'),
-                            actions: <Widget>[
-                              TextButton(
-                                child: const Text('戻る'),
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
-                              ),
-                              TextButton(
-                                child: const Text('OK'),
-                                onPressed: () {
-                                  if (loveMemberIndex == -1) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                        content: Text('相手を選んでください！'),
-                                        duration: Duration(seconds: 2),
-                                        backgroundColor: Colors.red,
-                                      ),
-                                    );
-                                  } else {
-                                    ref
-                                        .read(membersProvider.notifier)
-                                        .update((state) {
-                                      state[index]
-                                          .setLoveMember(loveMemberIndex!);
-                                      return state;
-                                    });
-                                    ref
-                                        .read(memberIndexProvider.notifier)
-                                        .update((state) => state + 1);
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              const MatchGuidePage()),
-                                    );
-                                  }
-                                },
-                              ),
-                            ],
-                          );
-                        },
-                      );
-                    },
                   ),
                 ),
               ],
