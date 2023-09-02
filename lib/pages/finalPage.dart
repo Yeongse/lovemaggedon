@@ -60,14 +60,16 @@ class FinalPage extends StatelessWidget {
 
       List<Widget> bodyComponents = allCouples.isEmpty
           ? const [
-              Text(
-                '残念、カップルは成立しなかったよ...',
-                style: TextStyle(
-                  fontSize: 18.0,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.black54,
+              Center(
+                child: Text(
+                  '残念\nカップルは成立しなかったよ...',
+                  style: TextStyle(
+                    fontSize: 24.0,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.black54,
+                  ),
+                  textAlign: TextAlign.center,
                 ),
-                textAlign: TextAlign.center,
               )
             ]
           : allCouples
@@ -128,6 +130,19 @@ class FinalPage extends StatelessWidget {
       );
 
       bodyComponents.add(resetButton);
+      bodyComponents.insert(
+          0,
+          const Center(
+            child: Text(
+              '今回成立したのは...',
+              style: TextStyle(
+                fontSize: 24.0,
+                fontWeight: FontWeight.w600,
+                color: Colors.black54,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ));
 
       return Scaffold(
         appBar: AppBar(
