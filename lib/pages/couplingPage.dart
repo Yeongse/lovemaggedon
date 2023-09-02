@@ -36,7 +36,7 @@ class _SmallMemberRadioComponentState extends State<SmallMemberRadioComponent> {
     final deviceSize = MediaQuery.of(context).size;
 
     // 画像のサイズを定義
-    double imageWidth = deviceSize.width * (widget.isSmall ? 0.175 : 0.35);
+    double imageWidth = deviceSize.width * (widget.isSmall ? 0.15 : 0.3);
     double imageHeight = imageWidth * 1.5; // 画像を長方形にするために高さを1.5倍にします。
 
     List<Widget> mainChildren = [
@@ -161,14 +161,6 @@ class _CouplingPageState extends State<CouplingPage>
           .toList();
 
       return Scaffold(
-        appBar: AppBar(
-          title: const Text(
-            "運命の結果！！",
-            style: TextStyle(color: Colors.white),
-          ),
-          centerTitle: true,
-          automaticallyImplyLeading: false,
-        ),
         body: SingleChildScrollView(
           child: Column(children: [
             CustomPaint(
@@ -176,6 +168,7 @@ class _CouplingPageState extends State<CouplingPage>
                   MultiLinePainter(lines: lines, progress: _animation.value),
               child: Container(),
             ),
+            const SizedBox(height: 24.0),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -273,14 +266,16 @@ class _CouplingPageState extends State<CouplingPage>
               margin: const EdgeInsets.all(10),
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  foregroundColor: Colors.white,
-                  backgroundColor: Colors.pinkAccent, // テキストの色
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30), // ボタンの角を丸く
+                  backgroundColor: Colors.deepPurple,
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                  textStyle: const TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
                   ),
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 20, vertical: 12), // ボタンのサイズ調整
-                  elevation: 5, // ボタンの影の高さ
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
                 ),
                 onPressed: () {
                   if (revealIndex != -1) {
@@ -310,8 +305,6 @@ class _CouplingPageState extends State<CouplingPage>
                                             : love.toIndex == revealIndex)
                                         .toList();
                                     isOpened = true;
-                                    print(matchedLoves);
-                                    print(matchedLoves.length);
                                     if (matchedLoves.isEmpty) {
                                       showDialog(
                                         context: context,
@@ -362,9 +355,15 @@ class _CouplingPageState extends State<CouplingPage>
 
                                         return Line(
                                             startX: centerPositionFrom.dx,
-                                            startY: centerPositionFrom.dy - 102,
+                                            startY: centerPositionFrom.dy -
+                                                102 +
+                                                100 +
+                                                2,
                                             endX: centerPositionTo.dx,
-                                            endY: centerPositionTo.dy - 102);
+                                            endY: centerPositionTo.dy -
+                                                102 +
+                                                100 +
+                                                2);
                                       }).toList();
                                       _controller.forward(from: 0);
                                       Navigator.of(context).pop();
@@ -405,14 +404,16 @@ class _CouplingPageState extends State<CouplingPage>
               margin: const EdgeInsets.all(10),
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  foregroundColor: Colors.white,
-                  backgroundColor: Colors.pinkAccent, // テキストの色
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30), // ボタンの角を丸く
+                  backgroundColor: Colors.deepPurple,
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                  textStyle: const TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
                   ),
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 20, vertical: 12), // ボタンのサイズ調整
-                  elevation: 5, // ボタンの影の高さ
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
                 ),
                 child: const Text('結ばれたか確認する'),
                 onPressed: () {
@@ -490,7 +491,7 @@ class _CouplingPageState extends State<CouplingPage>
                     builder: (BuildContext context) {
                       return AlertDialog(
                         title: const Text('確認'),
-                        content: const Text('最終結果を確認して良い？(全員の結果が見えてしまうよ)'),
+                        content: const Text('最終結果を確認して良い？\n※全員の結果が見えてしまうよ'),
                         actions: <Widget>[
                           TextButton(
                             child: const Text('キャンセル'),
@@ -591,8 +592,10 @@ void _showPopUp(BuildContext context, List<Member> couple) {
                     child: Text(
                       'カップル成立♡',
                       style: TextStyle(
-                        fontSize: 24.0,
+                        fontFamily: 'Bebas Neue',
+                        fontSize: 24,
                         fontWeight: FontWeight.bold,
+                        color: Colors.red,
                       ),
                     ),
                   ),

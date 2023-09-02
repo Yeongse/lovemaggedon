@@ -15,9 +15,6 @@ class GuidePage extends StatelessWidget {
 
       Widget buildScaffold(String text, Function onPressed) {
         return Scaffold(
-          appBar: AppBar(
-            automaticallyImplyLeading: false,
-          ),
           body: Padding(
             padding: const EdgeInsets.all(16.0),
             child: Center(
@@ -64,7 +61,7 @@ class GuidePage extends StatelessWidget {
 
       if (index >= ref.watch(memberNumProvider)) {
         return buildScaffold(
-          '全員の登録が完了したよ！お疲れさま！',
+          '全員の登録が完了したよ！\nみんなを一覧表示するね！',
           () {
             Navigator.push(
               context,
@@ -76,7 +73,7 @@ class GuidePage extends StatelessWidget {
         return ref.watch(cameraProvider).when(
               data: (camera) {
                 return buildScaffold(
-                  '${index + 1}番目の参加者を登録するよ!',
+                  '${index + 1}番目の参加者を登録するよ！',
                   () {
                     Navigator.push(
                       context,

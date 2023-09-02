@@ -90,87 +90,77 @@ class AllMembersPage extends StatelessWidget {
       List<Member> females =
           allMembers.where((member) => member.sex == '女の子').toList();
       return Scaffold(
-          appBar: AppBar(
-            automaticallyImplyLeading: false,
-            title: const Text(
-              "参加者一覧",
-              style:
-                  TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-            ),
-            centerTitle: true,
-          ),
           body: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  "男の子の参加者",
-                  style: TextStyle(
-                    fontSize: 20.0,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.blueAccent,
-                  ),
-                ),
-                const SizedBox(height: 12.0),
-                SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    children: males
-                        .map(
-                            (maleMember) => MemberComponent(member: maleMember))
-                        .toList(),
-                  ),
-                ),
-                const SizedBox(height: 24.0),
-                const Text(
-                  "女の子の参加者",
-                  style: TextStyle(
-                    fontSize: 20.0,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.pinkAccent,
-                  ),
-                ),
-                const SizedBox(height: 12.0),
-                SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    children: females
-                        .map((femaleMember) =>
-                            MemberComponent(member: femaleMember))
-                        .toList(),
-                  ),
-                ),
-                const SizedBox(height: 24.0),
-                Center(
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.deepPurple,
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10.0),
-                      ),
-                    ),
-                    child: const Text(
-                      '気になる相手を選ぶ',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                      ),
-                    ),
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const MatchGuidePage()),
-                      );
-                    },
-                  ),
-                ),
-              ],
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(height: 60.0),
+            const Text(
+              "男の子の参加者",
+              style: TextStyle(
+                fontSize: 20.0,
+                fontWeight: FontWeight.bold,
+                color: Colors.blueAccent,
+              ),
             ),
-          ));
+            const SizedBox(height: 12.0),
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: males
+                    .map((maleMember) => MemberComponent(member: maleMember))
+                    .toList(),
+              ),
+            ),
+            const SizedBox(height: 24.0),
+            const Text(
+              "女の子の参加者",
+              style: TextStyle(
+                fontSize: 20.0,
+                fontWeight: FontWeight.bold,
+                color: Colors.pinkAccent,
+              ),
+            ),
+            const SizedBox(height: 12.0),
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: females
+                    .map(
+                        (femaleMember) => MemberComponent(member: femaleMember))
+                    .toList(),
+              ),
+            ),
+            const SizedBox(height: 24.0),
+            Center(
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.deepPurple,
+                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                ),
+                child: const Text(
+                  '気になる相手を選ぶ',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
+                ),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const MatchGuidePage()),
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
+      ));
     });
   }
 }

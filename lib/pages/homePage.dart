@@ -9,13 +9,6 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          title,
-          style: const TextStyle(color: Colors.white),
-        ),
-        centerTitle: true,
-      ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
         child: Center(

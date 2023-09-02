@@ -26,11 +26,6 @@ class _RegisterPageState extends State<RegisterPage> {
 
       return Scaffold(
           resizeToAvoidBottomInset: true,
-          appBar: AppBar(
-            title: const Text("登録"),
-            centerTitle: true,
-            automaticallyImplyLeading: false,
-          ),
           body: SingleChildScrollView(
             child: Padding(
               padding: const EdgeInsets.all(16.0),
@@ -38,6 +33,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+                  const SizedBox(height: 50.0),
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.deepPurple,
@@ -176,7 +172,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         builder: (BuildContext context) {
                           return AlertDialog(
                             title: const Text('確認'),
-                            content: const Text('これで登録しても大丈夫？'),
+                            content: const Text('この内容で登録しても大丈夫？？'),
                             actions: <Widget>[
                               TextButton(
                                 child: const Text('キャンセル'),

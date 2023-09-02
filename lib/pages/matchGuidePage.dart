@@ -18,9 +18,6 @@ class MatchGuidePage extends StatelessWidget {
 
       Widget buildScaffold(Member chooser, String text, Function onPressed) {
         return Scaffold(
-          appBar: AppBar(
-            automaticallyImplyLeading: false,
-          ),
           body: Padding(
             padding: const EdgeInsets.all(16.0),
             child: Center(
@@ -74,9 +71,6 @@ class MatchGuidePage extends StatelessWidget {
 
       if (index >= ref.watch(memberNumProvider)) {
         return Scaffold(
-          appBar: AppBar(
-            automaticallyImplyLeading: false,
-          ),
           body: Padding(
             padding: const EdgeInsets.all(16.0),
             child: Center(
@@ -87,7 +81,7 @@ class MatchGuidePage extends StatelessWidget {
                     alignment: Alignment.center,
                     width: deviceSize.width,
                     child: const Text(
-                      '全員の登録が完了したよ！お疲れさま！',
+                      '全員の登録が完了したよ！\n結果はどうかな〜♡',
                       style: TextStyle(
                         fontFamily: 'Bebas Neue',
                         fontSize: 24,
@@ -131,7 +125,7 @@ class MatchGuidePage extends StatelessWidget {
               data: (camera) {
                 return buildScaffold(
                   chooser,
-                  '${chooser.name}さん、気になる相手を選んでね♡',
+                  '${chooser.name}さん\n気になる相手を選んでね♡',
                   () {
                     Navigator.push(
                       context,

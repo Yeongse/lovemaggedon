@@ -34,11 +34,11 @@ class CoupleComponent extends StatelessWidget {
             ),
             const SizedBox(height: 20.0),
             Text(
-              '${couple[0].name} & ${couple[1].name} カップル',
+              '${couple[0].name} & ${couple[1].name} カップル♡',
               style: const TextStyle(
                 fontSize: 20, // フォントサイズを大きく
                 fontWeight: FontWeight.bold, // 太字に
-                color: Colors.deepPurple, // 色を深紫に
+                color: Colors.red, // 色を深紫に
               ),
               textAlign: TextAlign.center,
             ),
@@ -58,7 +58,23 @@ class FinalPage extends StatelessWidget {
       final allMembers = ref.watch(membersProvider);
       List<List<Member>> allCouples = getCouples(allMembers);
 
-      List<Widget> bodyComponents = allCouples.isEmpty
+      List<Widget> initialComponents = [
+        const SizedBox(height: 80),
+        const Center(
+          child: Text(
+            '今回成立したのは...',
+            style: TextStyle(
+              fontSize: 24.0,
+              fontWeight: FontWeight.w600,
+              color: Colors.black54,
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ),
+        const SizedBox(height: 80)
+      ];
+
+      List<Widget> coupleComponents = allCouples.isEmpty
           ? const [
               Center(
                 child: Text(
@@ -70,7 +86,7 @@ class FinalPage extends StatelessWidget {
                   ),
                   textAlign: TextAlign.center,
                 ),
-              )
+              ),
             ]
           : allCouples
               .map((couple) => Padding(
@@ -102,7 +118,7 @@ class FinalPage extends StatelessWidget {
                 return AlertDialog(
                   title: const Text('確認'),
                   content:
-                      const Text('今回のマッチングは終了して良い？(データはもう残らないよ！スクショするなら今のうち！)'),
+                      const Text('このマッチングを終了するよ？\n※データはもう残らないからスクショするなら今だよ！)'),
                   actions: <Widget>[
                     TextButton(
                       child: const Text('キャンセル'),
@@ -129,33 +145,12 @@ class FinalPage extends StatelessWidget {
         ),
       );
 
-      bodyComponents.add(resetButton);
-      bodyComponents.insert(
-          0,
-          const Center(
-            child: Text(
-              '今回成立したのは...',
-              style: TextStyle(
-                fontSize: 24.0,
-                fontWeight: FontWeight.w600,
-                color: Colors.black54,
-              ),
-              textAlign: TextAlign.center,
-            ),
-          ));
+      List<Widget> bodyComponents = []
+        ..addAll(initialComponents)
+        ..addAll(coupleComponents)
+        ..add(resetButton);
 
       return Scaffold(
-        appBar: AppBar(
-          title: const Text(
-            "最終結果",
-            style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold), // ここでテキストを太字に
-          ),
-          centerTitle: true,
-          automaticallyImplyLeading: false,
-          backgroundColor: Colors.deepPurple, // AppBarの色を深紫に変更
-        ),
         body: SingleChildScrollView(
           scrollDirection: Axis.vertical,
           padding: const EdgeInsets.all(20.0), // 全体の余白を追加

@@ -18,17 +18,11 @@ class _SettingPageState extends State<SettingPage> {
   Widget build(BuildContext context) {
     return Consumer(builder: (context, ref, child) {
       return Scaffold(
-        appBar: AppBar(
-          title: const Text(
-            "初期設定",
-            style: TextStyle(color: Colors.white),
-          ),
-          centerTitle: true,
-        ),
         body: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 32.0),
           child: Center(
             child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 const Text(
@@ -73,7 +67,7 @@ class _SettingPageState extends State<SettingPage> {
                     ),
                   ),
                   child: const Text(
-                    '参加人数を確定する',
+                    '人数を確定する',
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 16,

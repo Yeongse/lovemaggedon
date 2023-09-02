@@ -93,7 +93,7 @@ class _LargeMemberRadioComponentState extends State<LargeMemberRadioComponent> {
                       ),
                     ),
                     child: const Text(
-                      'この人に決める',
+                      'この人に決める♡',
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 12,
@@ -106,7 +106,7 @@ class _LargeMemberRadioComponentState extends State<LargeMemberRadioComponent> {
                           return AlertDialog(
                             title: const Text('確認'),
                             content: Text(
-                                '${chooser.name}さんが気になるのは${widget.member.name}さんなんだね？'),
+                                '${chooser.name}さんが気になるのは\n${widget.member.name}さんなんだね？'),
                             actions: <Widget>[
                               TextButton(
                                 child: const Text('戻る'),
@@ -175,43 +175,34 @@ class _ChoosePageState extends State<ChoosePage> {
       final Member chooser = allMembers[index];
 
       return Scaffold(
-          appBar: AppBar(
-            automaticallyImplyLeading: false,
-            title: const Text(
-              "ドキドキ！",
-              style:
-                  TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-            ),
-            centerTitle: true,
-          ),
           body: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(height: 24.0),
-                const Text(
-                  "お相手の皆さん",
-                  style: TextStyle(
-                    fontSize: 20.0,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.pinkAccent,
-                  ),
-                ),
-                const SizedBox(height: 12.0),
-                SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    children: (chooser.sex == "男の子" ? females : males)
-                        .map((member) => LargeMemberRadioComponent(
-                              member: member,
-                            ))
-                        .toList(),
-                  ),
-                ),
-              ],
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(height: 50.0),
+            const Text(
+              "お相手の皆さん",
+              style: TextStyle(
+                fontSize: 20.0,
+                fontWeight: FontWeight.bold,
+                color: Colors.pinkAccent,
+              ),
             ),
-          ));
+            const SizedBox(height: 12.0),
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: (chooser.sex == "男の子" ? females : males)
+                    .map((member) => LargeMemberRadioComponent(
+                          member: member,
+                        ))
+                    .toList(),
+              ),
+            ),
+          ],
+        ),
+      ));
     });
   }
 }
