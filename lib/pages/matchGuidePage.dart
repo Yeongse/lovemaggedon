@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers.dart';
@@ -14,6 +15,7 @@ class MatchGuidePage extends StatelessWidget {
       final deviceSize = MediaQuery.of(context).size;
       final int index = ref.watch(memberIndexProvider);
       final allMembers = ref.watch(membersProvider);
+      Member chooser = allMembers[index];
 
       Widget buildScaffold(String text, Function onPressed) {
         return Scaffold(
@@ -40,7 +42,14 @@ class MatchGuidePage extends StatelessWidget {
                       textAlign: TextAlign.center,
                     ),
                   ),
-                  const SizedBox(height: 40.0),
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(15.0),
+                    child: Image.file(
+                      File(chooser.image),
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                  const SizedBox(height: 30.0),
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.deepPurple,
@@ -75,7 +84,7 @@ class MatchGuidePage extends StatelessWidget {
           },
         );
       } else {
-        final Member chooser = allMembers[index];
+        Member chooser = allMembers[index];
         return ref.watch(cameraProvider).when(
               data: (camera) {
                 return buildScaffold(
