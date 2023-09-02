@@ -310,38 +310,66 @@ class _CouplingPageState extends State<CouplingPage>
                                             : love.toIndex == revealIndex)
                                         .toList();
                                     isOpened = true;
-                                    lines = matchedLoves.map((Love love) {
-                                      final RenderBox renderBoxFrom =
-                                          globalKeys[love.fromIndex]
-                                              .currentContext!
-                                              .findRenderObject() as RenderBox;
-                                      final RenderBox renderBoxTo =
-                                          globalKeys[love.toIndex]
-                                              .currentContext!
-                                              .findRenderObject() as RenderBox;
-                                      final topLeftPositionFrom = renderBoxFrom
-                                          .localToGlobal(Offset.zero);
-                                      final topLeftPositionTo = renderBoxTo
-                                          .localToGlobal(Offset.zero);
-                                      final centerPositionFrom =
-                                          topLeftPositionFrom.translate(
-                                        renderBoxFrom.size.width / 2,
-                                        renderBoxFrom.size.height / 2,
+                                    print(matchedLoves);
+                                    print(matchedLoves.length);
+                                    if (matchedLoves.isEmpty) {
+                                      showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return AlertDialog(
+                                            title: const Text('ごめんなさい'),
+                                            content:
+                                                const Text('気になる人はいなかったみたい...'),
+                                            actions: <Widget>[
+                                              TextButton(
+                                                child: const Text('戻る'),
+                                                onPressed: () {
+                                                  Navigator.of(context).pop();
+                                                  Navigator.of(context).pop();
+                                                },
+                                              ),
+                                            ],
+                                          );
+                                        },
                                       );
-                                      final centerPositionTo =
-                                          topLeftPositionTo.translate(
-                                        renderBoxTo.size.width / 2,
-                                        renderBoxTo.size.height / 2,
-                                      );
-                                      return Line(
-                                          startX: centerPositionFrom.dx,
-                                          startY: centerPositionFrom.dy - 102,
-                                          endX: centerPositionTo.dx,
-                                          endY: centerPositionTo.dy - 102);
-                                    }).toList();
+                                    } else {
+                                      lines = matchedLoves.map((Love love) {
+                                        final RenderBox renderBoxFrom =
+                                            globalKeys[love.fromIndex]
+                                                    .currentContext!
+                                                    .findRenderObject()
+                                                as RenderBox;
+                                        final RenderBox renderBoxTo =
+                                            globalKeys[love.toIndex]
+                                                    .currentContext!
+                                                    .findRenderObject()
+                                                as RenderBox;
+                                        final topLeftPositionFrom =
+                                            renderBoxFrom
+                                                .localToGlobal(Offset.zero);
+                                        final topLeftPositionTo = renderBoxTo
+                                            .localToGlobal(Offset.zero);
+                                        final centerPositionFrom =
+                                            topLeftPositionFrom.translate(
+                                          renderBoxFrom.size.width / 2,
+                                          renderBoxFrom.size.height / 2,
+                                        );
+                                        final centerPositionTo =
+                                            topLeftPositionTo.translate(
+                                          renderBoxTo.size.width / 2,
+                                          renderBoxTo.size.height / 2,
+                                        );
+
+                                        return Line(
+                                            startX: centerPositionFrom.dx,
+                                            startY: centerPositionFrom.dy - 102,
+                                            endX: centerPositionTo.dx,
+                                            endY: centerPositionTo.dy - 102);
+                                      }).toList();
+                                      _controller.forward(from: 0);
+                                      Navigator.of(context).pop();
+                                    }
                                   });
-                                  _controller.forward(from: 0);
-                                  Navigator.of(context).pop();
                                 });
                               },
                             ),
@@ -559,11 +587,13 @@ void _showPopUp(BuildContext context, List<Member> couple) {
               children: <Widget>[
                 const Padding(
                   padding: EdgeInsets.all(16.0),
-                  child: Text(
-                    'カップル成立おめでとう！！',
-                    style: TextStyle(
-                      fontSize: 24.0,
-                      fontWeight: FontWeight.bold,
+                  child: Center(
+                    child: Text(
+                      'カップル成立♡',
+                      style: TextStyle(
+                        fontSize: 24.0,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ),

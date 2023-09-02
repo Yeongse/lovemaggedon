@@ -1,9 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lovemaggedon/main.dart';
 import '../models/member.dart';
-import '../models/love.dart';
 import '../providers.dart';
 import 'homePage.dart';
 
