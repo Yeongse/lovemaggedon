@@ -74,11 +74,34 @@ class _SettingPageState extends State<SettingPage> {
                     ),
                   ),
                   onPressed: () {
-                    ref.read(memberNumProvider.notifier).state = memberNum;
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const GuidePage()),
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: const Text('確認'),
+                          content: const Text('人数に間違いはない？\n※後から変更できないよ'),
+                          actions: <Widget>[
+                            TextButton(
+                              child: const Text('戻る'),
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                            ),
+                            TextButton(
+                              child: const Text('OK'),
+                              onPressed: () {
+                                ref.read(memberNumProvider.notifier).state =
+                                    memberNum;
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => const GuidePage()),
+                                );
+                              },
+                            ),
+                          ],
+                        );
+                      },
                     );
                   },
                 ),
