@@ -188,7 +188,7 @@ class _ChoosePageState extends State<ChoosePage> {
                           return AlertDialog(
                             title: const Text('確認'),
                             content: Text(
-                                '${allMembers[loveMemberIndex!].name}さんで間違いないですか？'),
+                                '$chooserさんが気になるのは${allMembers[loveMemberIndex!].name}さんなんだね？'),
                             actions: <Widget>[
                               TextButton(
                                 child: const Text('戻る'),

@@ -58,7 +58,7 @@ class _RegisterPageState extends State<RegisterPage> {
                             builder: (BuildContext context) {
                               return AlertDialog(
                                 title: const Text('確認'),
-                                content: const Text('本当に撮り直しますか？'),
+                                content: const Text('本当に撮り直しても大丈夫？'),
                                 actions: <Widget>[
                                   TextButton(
                                     child: const Text('キャンセル'),
@@ -130,7 +130,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       ),
                       dropdownColor: Colors.white,
                       value: sex.isEmpty ? null : sex,
-                      hint: const Text('性別を選択してください'),
+                      hint: const Text('性別がここに入るよ'),
                       icon: const Icon(Icons.arrow_drop_down,
                           color: Colors.blueGrey),
                       items: sexes.map<DropdownMenuItem<String>>((String sex) {
@@ -149,7 +149,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       },
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return '性別を選択してください';
+                          return '性別が入力されてないよ！';
                         }
                         return null;
                       },
@@ -176,7 +176,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         builder: (BuildContext context) {
                           return AlertDialog(
                             title: const Text('確認'),
-                            content: const Text('これで登録していいですか？'),
+                            content: const Text('これで登録しても大丈夫？'),
                             actions: <Widget>[
                               TextButton(
                                 child: const Text('キャンセル'),
@@ -191,7 +191,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                     // sexまたはnameが空の場合、スナックバーを表示
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(
-                                        content: Text('性別と名前を入力してください！'),
+                                        content: Text('性別と名前を入力してね！'),
                                         duration: Duration(seconds: 2),
                                         backgroundColor: Colors.red,
                                       ),
