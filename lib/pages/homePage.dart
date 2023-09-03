@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import './settingPage.dart';
 
@@ -8,6 +10,7 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final deviceSize = MediaQuery.of(context).size;
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -17,7 +20,7 @@ class HomePage extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               const Text(
-                '気になる男女をマッチング？！',
+                '今夜誰かが結ばれる？！',
                 style: TextStyle(
                   fontSize: 18.0,
                   fontWeight: FontWeight.w600,
@@ -27,7 +30,7 @@ class HomePage extends StatelessWidget {
               ),
               const SizedBox(height: 20.0),
               const Text(
-                'ドキドキマッチング!!',
+                'ドキドキマッチング',
                 style: TextStyle(
                   fontFamily: 'Bebas Neue',
                   fontSize: 36,
@@ -35,7 +38,13 @@ class HomePage extends StatelessWidget {
                   color: Colors.red,
                 ),
               ),
-              const SizedBox(height: 40.0),
+              ClipRRect(
+                  borderRadius: BorderRadius.circular(15.0),
+                  child: SizedBox(
+                      width: deviceSize.width * 0.8,
+                      height: deviceSize.width * 0.8,
+                      child: Image.asset('assets/home.png'))),
+              const SizedBox(height: 24.0),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.deepPurple,
@@ -49,7 +58,7 @@ class HomePage extends StatelessWidget {
                     borderRadius: BorderRadius.circular(10.0),
                   ),
                 ),
-                child: const Text('マッチングを始める'),
+                child: const Text('スタート'),
                 onPressed: () {
                   Navigator.push(
                     context,
