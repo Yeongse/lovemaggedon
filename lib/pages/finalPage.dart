@@ -55,6 +55,7 @@ class FinalPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Consumer(builder: (context, ref, child) {
+      final deviceSize = MediaQuery.of(context).size;
       final allMembers = ref.watch(membersProvider);
       List<List<Member>> allCouples = getCouples(allMembers);
 
@@ -71,7 +72,7 @@ class FinalPage extends StatelessWidget {
             textAlign: TextAlign.center,
           ),
         ),
-        const SizedBox(height: 80)
+        const SizedBox(height: 24)
       ];
 
       List<Widget> coupleComponents = allCouples.isEmpty
@@ -151,10 +152,19 @@ class FinalPage extends StatelessWidget {
         ..add(resetButton);
 
       return Scaffold(
-        body: SingleChildScrollView(
-          scrollDirection: Axis.vertical,
-          padding: const EdgeInsets.all(20.0), // 全体の余白を追加
-          child: Column(children: bodyComponents),
+        body: Container(
+          height: deviceSize.height,
+          decoration: const BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage("assets/background.png"),
+              fit: BoxFit.cover,
+            ),
+          ),
+          child: SingleChildScrollView(
+            scrollDirection: Axis.vertical,
+            padding: const EdgeInsets.all(20.0), // 全体の余白を追加
+            child: Column(children: bodyComponents),
+          ),
         ),
       );
     });
