@@ -130,6 +130,15 @@ class FinalPage extends StatelessWidget {
                     TextButton(
                       child: const Text('OK'),
                       onPressed: () {
+                        ref
+                            .read(memberNumProvider.notifier)
+                            .update((state) => 0);
+                        ref
+                            .read(memberIndexProvider.notifier)
+                            .update((state) => 0);
+                        ref
+                            .read(membersProvider.notifier)
+                            .update((state) => []);
                         Navigator.push(
                           context,
                           MaterialPageRoute(
