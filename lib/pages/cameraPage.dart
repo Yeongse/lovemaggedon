@@ -5,6 +5,7 @@ import './registerPage.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'homePage.dart';
 import '../providers.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class CameraPage extends StatefulWidget {
   const CameraPage({super.key, required this.camera});
@@ -19,22 +20,22 @@ class CameraPageState extends State<CameraPage> {
   late CameraController _controller;
   late Future<void> _initializeControllerFuture;
 
+  Future<void> _checkCameraPermission() async {
+    PermissionStatus status = await Permission.camera.status;
+    if (status.isDenied || status.isPermanentlyDenied) {
+      setState(() {
+        _cameraPermissionDenied = true;
+      });
+    }
+  }
+
   @override
   void initState() {
     super.initState();
-
     _controller = CameraController(widget.camera, ResolutionPreset.medium,
         imageFormatGroup: ImageFormatGroup.bgra8888, enableAudio: false);
-
-    _initializeControllerFuture = _controller.initialize().catchError((e) {
-      if (e is CameraException && e.code == 'PERMISSION_DENIED') {
-        setState(() {
-          _cameraPermissionDenied = true;
-        });
-      } else {
-        throw e;
-      }
-    });
+    _initializeControllerFuture = _controller.initialize();
+    _checkCameraPermission();
   }
 
   @override
@@ -61,43 +62,13 @@ class CameraPageState extends State<CameraPage> {
           child: const Text('ホームに戻る',
               style: TextStyle(fontSize: 18)), // フォントサイズを少し大きく
           onPressed: () {
-            showDialog(
-              context: context,
-              builder: (BuildContext context) {
-                return AlertDialog(
-                  title: const Text('確認'),
-                  content:
-                      const Text('このマッチングを終了するよ？\n※データはもう残らないからスクショするなら今だよ！)'),
-                  actions: <Widget>[
-                    TextButton(
-                      child: const Text('キャンセル'),
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                    ),
-                    TextButton(
-                      child: const Text('OK'),
-                      onPressed: () {
-                        ref
-                            .read(memberNumProvider.notifier)
-                            .update((state) => 0);
-                        ref
-                            .read(memberIndexProvider.notifier)
-                            .update((state) => 0);
-                        ref
-                            .read(membersProvider.notifier)
-                            .update((state) => []);
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) =>
-                                  const HomePage(title: 'ドキドキマッチング！！')),
-                        );
-                      },
-                    ),
-                  ],
-                );
-              },
+            ref.read(memberNumProvider.notifier).update((state) => 0);
+            ref.read(memberIndexProvider.notifier).update((state) => 0);
+            ref.read(membersProvider.notifier).update((state) => []);
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => const HomePage(title: 'ドキドキマッチング！！')),
             );
           },
         ),
@@ -118,7 +89,7 @@ class CameraPageState extends State<CameraPage> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     const Text(
-                      'カメラへのアクセス権限がないからプレイできないよ...\niPhoneの「設定」→「プライバシーとセキュリティ」→「カメラ」でドキマチに許可を与えてアプリを再起動してね...',
+                      'カメラへのアクセス権限がないから\nプレイできないよ...\n\niPhoneの「設定」→「プライバシーとセキュリティ」→「カメラ」で「ドキマチ」に許可を与えてアプリを再起動してね...',
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 18.0,

@@ -143,43 +143,13 @@ class AllMembersPage extends StatelessWidget {
           child: const Text('ホームに戻る',
               style: TextStyle(fontSize: 18)), // フォントサイズを少し大きく
           onPressed: () {
-            showDialog(
-              context: context,
-              builder: (BuildContext context) {
-                return AlertDialog(
-                  title: const Text('確認'),
-                  content:
-                      const Text('このマッチングを終了するよ？\n※データはもう残らないからスクショするなら今だよ！)'),
-                  actions: <Widget>[
-                    TextButton(
-                      child: const Text('キャンセル'),
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                    ),
-                    TextButton(
-                      child: const Text('OK'),
-                      onPressed: () {
-                        ref
-                            .read(memberNumProvider.notifier)
-                            .update((state) => 0);
-                        ref
-                            .read(memberIndexProvider.notifier)
-                            .update((state) => 0);
-                        ref
-                            .read(membersProvider.notifier)
-                            .update((state) => []);
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) =>
-                                  const HomePage(title: 'ドキドキマッチング！！')),
-                        );
-                      },
-                    ),
-                  ],
-                );
-              },
+            ref.read(memberNumProvider.notifier).update((state) => 0);
+            ref.read(memberIndexProvider.notifier).update((state) => 0);
+            ref.read(membersProvider.notifier).update((state) => []);
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => const HomePage(title: 'ドキドキマッチング！！')),
             );
           },
         ),
@@ -209,7 +179,7 @@ class AllMembersPage extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     const Text(
-                      '片方の性別しかいないから、このゲームは実施できないよ...\nもう一度最初からやり直してね',
+                      '片方の性別しかいないから\nこのゲームは実施できないよ...\n\nもう一度最初からやり直してね',
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 18.0,
