@@ -22,7 +22,19 @@ class CameraPageState extends State<CameraPage> {
 
   Future<void> _checkCameraPermission() async {
     PermissionStatus status = await Permission.camera.status;
-    if (status.isDenied || status.isPermanentlyDenied) {
+    if (status == PermissionStatus.denied ||
+        status == PermissionStatus.permanentlyDenied) {
+      print('Before requesting permission, status=$status');
+      PermissionStatus newStatus = await Permission.camera.request();
+      print(newStatus);
+      status = await Permission.camera.status;
+      print('After requesting permission, status=$status');
+    }
+    if (status.isGranted) {
+      setState(() {
+        _cameraPermissionDenied = false;
+      });
+    } else {
       setState(() {
         _cameraPermissionDenied = true;
       });
@@ -34,8 +46,10 @@ class CameraPageState extends State<CameraPage> {
     super.initState();
     _controller = CameraController(widget.camera, ResolutionPreset.medium,
         imageFormatGroup: ImageFormatGroup.bgra8888, enableAudio: false);
-    _initializeControllerFuture = _controller.initialize();
-    _checkCameraPermission();
+    _initializeControllerFuture = Future.wait([
+      _controller.initialize(),
+      _checkCameraPermission(),
+    ]);
   }
 
   @override
@@ -52,8 +66,8 @@ class CameraPageState extends State<CameraPage> {
         padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
         child: ElevatedButton(
           style: ElevatedButton.styleFrom(
-            foregroundColor: Colors.white,
             backgroundColor: Colors.blue,
+            foregroundColor: Colors.white,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(30),
             ),
@@ -62,13 +76,14 @@ class CameraPageState extends State<CameraPage> {
           child: const Text('ホームに戻る',
               style: TextStyle(fontSize: 18)), // フォントサイズを少し大きく
           onPressed: () {
-            ref.read(memberNumProvider.notifier).update((state) => 0);
-            ref.read(memberIndexProvider.notifier).update((state) => 0);
-            ref.read(membersProvider.notifier).update((state) => []);
-            Navigator.push(
-              context,
+            ref.read(memberNumProvider.notifier).state = 0;
+            ref.read(memberIndexProvider.notifier).state = 0;
+            ref.read(membersProvider.notifier).state = [];
+            ref.read(isTestModeProvider.notifier).state = false;
+            Navigator.of(context).pushAndRemoveUntil(
               MaterialPageRoute(
                   builder: (context) => const HomePage(title: 'ドキドキマッチング！！')),
+              (route) => false,
             );
           },
         ),

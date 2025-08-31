@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers.dart';
 import './cameraPage.dart';
 import './allMembersPage.dart';
+import './registerPage.dart';
 
 class GuidePage extends StatelessWidget {
   const GuidePage({Key? key}) : super(key: key);
@@ -46,6 +47,7 @@ class GuidePage extends StatelessWidget {
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.deepPurple,
+                        foregroundColor: Colors.white,
                         padding: const EdgeInsets.symmetric(
                             horizontal: 50, vertical: 15),
                         textStyle: const TextStyle(
@@ -78,6 +80,25 @@ class GuidePage extends StatelessWidget {
           },
         );
       } else {
+        final bool isTest = ref.watch(isTestModeProvider);
+        if (isTest) {
+          return buildScaffold(
+            '${index + 1}番目の参加者を登録するよ！',
+            () {
+              // テストモード時はダミー画像で登録へ
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => RegisterPage(
+                    imagePath: index % 2 == 0
+                        ? 'assets/male_sample.png'
+                        : 'assets/female_sanple.png',
+                  ),
+                ),
+              );
+            },
+          );
+        }
         return ref.watch(cameraProvider).when(
               data: (camera) {
                 return buildScaffold(

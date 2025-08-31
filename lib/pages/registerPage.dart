@@ -22,6 +22,7 @@ class _RegisterPageState extends State<RegisterPage> {
     return Consumer(builder: (context, ref, child) {
       final deviceSize = MediaQuery.of(context).size;
       final int index = ref.watch(memberIndexProvider);
+      final bool isTest = ref.watch(isTestModeProvider);
       final List<String> sexes = ['男の子', '女の子'];
 
       return Scaffold(
@@ -45,6 +46,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.deepPurple,
+                        foregroundColor: Colors.white,
                         padding: const EdgeInsets.symmetric(
                             horizontal: 50, vertical: 15),
                         textStyle: const TextStyle(
@@ -91,7 +93,17 @@ class _RegisterPageState extends State<RegisterPage> {
                     SizedBox(
                       width: 270,
                       height: 360,
-                      child: Image.file(File(widget.imagePath)),
+                      child: (() {
+                        final String displayPath = isTest
+                            ? (sex == '女の子'
+                                ? 'assets/female_sanple.png'
+                                : 'assets/male_sample.png')
+                            : widget.imagePath;
+                        if (displayPath.startsWith('assets/')) {
+                          return Image.asset(displayPath, fit: BoxFit.cover);
+                        }
+                        return Image.file(File(displayPath), fit: BoxFit.cover);
+                      })(),
                     ),
                     const SizedBox(height: 16),
                     SizedBox(
@@ -164,6 +176,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.deepPurple,
+                        foregroundColor: Colors.white,
                         padding: const EdgeInsets.symmetric(
                             horizontal: 50, vertical: 15),
                         textStyle: const TextStyle(
@@ -203,8 +216,13 @@ class _RegisterPageState extends State<RegisterPage> {
                                         ),
                                       );
                                     } else {
+                                      final String imagePathToSave = isTest
+                                          ? (sex == '女の子'
+                                              ? 'assets/female_sanple.png'
+                                              : 'assets/male_sample.png')
+                                          : widget.imagePath;
                                       final Member member = Member(
-                                          index, sex, name, widget.imagePath);
+                                          index, sex, name, imagePathToSave);
                                       ref
                                           .read(membersProvider.notifier)
                                           .update((state) {

@@ -47,15 +47,15 @@ class MatchGuidePage extends StatelessWidget {
                     ),
                     ClipRRect(
                       borderRadius: BorderRadius.circular(15.0),
-                      child: Image.file(
-                        File(chooser.image),
-                        fit: BoxFit.cover,
-                      ),
+                      child: chooser.image.startsWith('assets/')
+                          ? Image.asset(chooser.image, fit: BoxFit.cover)
+                          : Image.file(File(chooser.image), fit: BoxFit.cover),
                     ),
                     const SizedBox(height: 30.0),
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.deepPurple,
+                        foregroundColor: Colors.white,
                         padding: const EdgeInsets.symmetric(
                             horizontal: 50, vertical: 15),
                         textStyle: const TextStyle(
@@ -110,6 +110,7 @@ class MatchGuidePage extends StatelessWidget {
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.deepPurple,
+                        foregroundColor: Colors.white,
                         padding: const EdgeInsets.symmetric(
                             horizontal: 50, vertical: 15),
                         textStyle: const TextStyle(
@@ -136,7 +137,31 @@ class MatchGuidePage extends StatelessWidget {
           ),
         );
       } else {
+        // 配列の範囲外アクセスを防ぐ
+        if (allMembers.isEmpty || index >= allMembers.length || index < 0) {
+          return const Scaffold(
+            body: Center(
+              child: Text('参加者データが見つかりません'),
+            ),
+          );
+        }
+
         Member chooser = allMembers[index];
+        final bool isTest = ref.watch(isTestModeProvider);
+        if (isTest) {
+          return buildScaffold(
+            chooser,
+            '${chooser.name}さん\n気になる相手を選んでね♡',
+            () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const ChoosePage(),
+                ),
+              );
+            },
+          );
+        }
         return ref.watch(cameraProvider).when(
               data: (camera) {
                 return buildScaffold(

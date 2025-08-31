@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/member.dart';
 import '../providers.dart';
 import './matchGuidePage.dart';
-import 'homePage.dart';
+import './notPlayablePage.dart';
 
 class MemberComponent extends StatelessWidget {
   final Member member;
@@ -12,55 +12,15 @@ class MemberComponent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Widget resetButton = Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-      child: ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          foregroundColor: Colors.white,
-          backgroundColor: Colors.blue,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(30),
-          ),
-          elevation: 5,
-        ),
-        child: const Text('ホームに戻る',
-            style: TextStyle(fontSize: 18)), // フォントサイズを少し大きく
-        onPressed: () {
-          showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return AlertDialog(
-                title: const Text('確認'),
-                content:
-                    const Text('このマッチングを終了するよ？\n※データはもう残らないからスクショするなら今だよ！)'),
-                actions: <Widget>[
-                  TextButton(
-                    child: const Text('キャンセル'),
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                  ),
-                  TextButton(
-                    child: const Text('OK'),
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) =>
-                                const HomePage(title: 'ドキドキマッチング！！')),
-                      );
-                    },
-                  ),
-                ],
-              );
-            },
-          );
-        },
-      ),
-    );
-
     return Consumer(builder: (context, ref, child) {
       final deviceSize = MediaQuery.of(context).size;
+
+      Widget _imageFromPath(String path) {
+        if (path.startsWith('assets/')) {
+          return Image.asset(path, fit: BoxFit.cover);
+        }
+        return Image.file(File(path), fit: BoxFit.cover);
+      }
 
       return Padding(
         padding: const EdgeInsets.all(16.0),
@@ -99,10 +59,7 @@ class MemberComponent extends StatelessWidget {
                   ),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(15.0),
-                    child: Image.file(
-                      File(member.image),
-                      fit: BoxFit.cover,
-                    ),
+                    child: _imageFromPath(member.image),
                   ),
                 ),
                 const SizedBox(height: 8.0),
@@ -129,154 +86,131 @@ class AllMembersPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Consumer(builder: (context, ref, child) {
-      final Widget resetButton = Padding(
-        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-        child: ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            foregroundColor: Colors.white,
-            backgroundColor: Colors.blue,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(30),
-            ),
-            elevation: 5,
-          ),
-          child: const Text('ホームに戻る',
-              style: TextStyle(fontSize: 18)), // フォントサイズを少し大きく
-          onPressed: () {
-            ref.read(memberNumProvider.notifier).update((state) => 0);
-            ref.read(memberIndexProvider.notifier).update((state) => 0);
-            ref.read(membersProvider.notifier).update((state) => []);
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => const HomePage(title: 'ドキドキマッチング！！')),
-            );
-          },
-        ),
-      );
-
       WidgetsBinding.instance.addPostFrameCallback((_) {
         ref.read(memberIndexProvider.notifier).update((state) => 0);
       });
-      final deviceSize = MediaQuery.of(context).size;
+      // deviceSize はこのスコープでは未使用
       final allMembers = ref.watch(membersProvider);
+
+      // メンバーが登録されていない場合は性別チェックを行わない
+      if (allMembers.isNotEmpty) {
+        List<Member> males =
+            allMembers.where((member) => member.sex == '男の子').toList();
+        List<Member> females =
+            allMembers.where((member) => member.sex == '女の子').toList();
+        if (males.isEmpty || females.isEmpty) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const NotPlayablePage(
+                  title: 'プレイできません',
+                  message: '男の子か女の子のどちらかしかいないため、プレイできません。\nホームに戻って最初からやり直してね。',
+                ),
+              ),
+            );
+          });
+          return const SizedBox.shrink();
+        }
+      }
+
       List<Member> males =
           allMembers.where((member) => member.sex == '男の子').toList();
       List<Member> females =
           allMembers.where((member) => member.sex == '女の子').toList();
-      return (males.isEmpty || females.isEmpty)
-          ? Scaffold(
-              body: Container(
-                height: deviceSize.height,
-                decoration: const BoxDecoration(
-                  image: DecorationImage(
-                    image: AssetImage("assets/background.png"),
-                    fit: BoxFit.cover,
-                  ),
+      return Scaffold(
+          body: LayoutBuilder(builder: (context, viewportConstraints) {
+        return SingleChildScrollView(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              minHeight: viewportConstraints.maxHeight,
+            ),
+            child: Container(
+              width: double.infinity,
+              decoration: const BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage("assets/background2.png"),
+                  fit: BoxFit.cover,
                 ),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    const SizedBox(height: 60.0),
                     const Text(
-                      '片方の性別しかいないから\nこのゲームは実施できないよ...\n\nもう一度最初からやり直してね',
-                      textAlign: TextAlign.center,
+                      "男の子の参加者",
                       style: TextStyle(
-                        fontSize: 18.0,
+                        fontSize: 20.0,
                         fontWeight: FontWeight.bold,
-                        color: Colors.black54,
+                        color: Colors.blueAccent,
                       ),
                     ),
-                    const SizedBox(height: 20.0),
-                    resetButton
+                    const SizedBox(height: 12.0),
+                    SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        children: males
+                            .map((maleMember) =>
+                                MemberComponent(member: maleMember))
+                            .toList(),
+                      ),
+                    ),
+                    const SizedBox(height: 24.0),
+                    const Text(
+                      "女の子の参加者",
+                      style: TextStyle(
+                        fontSize: 20.0,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.pinkAccent,
+                      ),
+                    ),
+                    const SizedBox(height: 12.0),
+                    SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        children: females
+                            .map((femaleMember) =>
+                                MemberComponent(member: femaleMember))
+                            .toList(),
+                      ),
+                    ),
+                    const SizedBox(height: 24.0),
+                    Center(
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.deepPurple,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 20, vertical: 12),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                          ),
+                        ),
+                        child: const Text(
+                          '気になる相手を選ぶ',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
+                        ),
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const MatchGuidePage()),
+                          );
+                        },
+                      ),
+                    ),
                   ],
                 ),
               ),
-            )
-          : Scaffold(
-              body: SingleChildScrollView(
-              child: Container(
-                decoration: const BoxDecoration(
-                  image: DecorationImage(
-                    image: AssetImage("assets/background2.png"),
-                    fit: BoxFit.cover,
-                  ),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const SizedBox(height: 60.0),
-                      const Text(
-                        "男の子の参加者",
-                        style: TextStyle(
-                          fontSize: 20.0,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.blueAccent,
-                        ),
-                      ),
-                      const SizedBox(height: 12.0),
-                      SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: Row(
-                          children: males
-                              .map((maleMember) =>
-                                  MemberComponent(member: maleMember))
-                              .toList(),
-                        ),
-                      ),
-                      const SizedBox(height: 24.0),
-                      const Text(
-                        "女の子の参加者",
-                        style: TextStyle(
-                          fontSize: 20.0,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.pinkAccent,
-                        ),
-                      ),
-                      const SizedBox(height: 12.0),
-                      SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: Row(
-                          children: females
-                              .map((femaleMember) =>
-                                  MemberComponent(member: femaleMember))
-                              .toList(),
-                        ),
-                      ),
-                      const SizedBox(height: 24.0),
-                      Center(
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.deepPurple,
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 20, vertical: 12),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10.0),
-                            ),
-                          ),
-                          child: const Text(
-                            '気になる相手を選ぶ',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
-                            ),
-                          ),
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => const MatchGuidePage()),
-                            );
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ));
+            ),
+          ),
+        );
+      }));
     });
   }
 }

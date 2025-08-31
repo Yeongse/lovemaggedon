@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/member.dart';
@@ -49,10 +50,12 @@ class _SmallMemberRadioComponentState extends State<SmallMemberRadioComponent> {
             height: imageHeight,
             child: ClipRRect(
               borderRadius: BorderRadius.circular(20.0), // ここで角を丸くします。
-              child: Image.file(
-                File(widget.member.image),
-                fit: BoxFit.cover, // 画像がコンテナにフィットするようにする。
-              ),
+              child: widget.member.image.startsWith('assets/')
+                  ? Image.asset(widget.member.image, fit: BoxFit.cover)
+                  : Image.file(
+                      File(widget.member.image),
+                      fit: BoxFit.cover, // 画像がコンテナにフィットするようにする。
+                    ),
             ),
           ),
           const SizedBox(height: 8.0),
@@ -105,6 +108,7 @@ class _CouplingPageState extends State<CouplingPage>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
+  Timer? _delayTimer;
 
   List<Line> lines = [];
   List<Love> matchedLoves = [];
@@ -128,19 +132,24 @@ class _CouplingPageState extends State<CouplingPage>
 
     _animation = Tween<double>(begin: 0, end: 1).animate(_controller)
       ..addListener(() {
-        setState(() {});
+        if (mounted) {
+          setState(() {});
+        }
       });
 
-    Future.delayed(Duration(seconds: 5), () {
-      setState(() {
-        isInitialTimePassed = true;
-      });
+    _delayTimer = Timer(Duration(seconds: 5), () {
+      if (mounted) {
+        setState(() {
+          isInitialTimePassed = true;
+        });
+      }
     });
   }
 
   @override
   void dispose() {
     _controller.dispose();
+    _delayTimer?.cancel();
     super.dispose();
   }
 
@@ -276,6 +285,7 @@ class _CouplingPageState extends State<CouplingPage>
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.deepPurple,
+                    foregroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(
                         horizontal: 50, vertical: 15),
                     textStyle: const TextStyle(
@@ -307,78 +317,83 @@ class _CouplingPageState extends State<CouplingPage>
                                 onPressed: () {
                                   WidgetsBinding.instance
                                       .addPostFrameCallback((_) {
-                                    setState(() {
-                                      matchedLoves = allLoves
-                                          .where((Love love) => direction ==
-                                                  "からの"
-                                              ? love.fromIndex == revealIndex
-                                              : love.toIndex == revealIndex)
-                                          .toList();
-                                      isOpened = true;
-                                      if (matchedLoves.isEmpty) {
-                                        showDialog(
-                                          context: context,
-                                          builder: (BuildContext context) {
-                                            return AlertDialog(
-                                              title: const Text('ごめんなさい'),
-                                              content: const Text(
-                                                  '気になる人はいなかったみたい...'),
-                                              actions: <Widget>[
-                                                TextButton(
-                                                  child: const Text('戻る'),
-                                                  onPressed: () {
-                                                    Navigator.of(context).pop();
-                                                    Navigator.of(context).pop();
-                                                  },
-                                                ),
-                                              ],
+                                    if (mounted) {
+                                      setState(() {
+                                        matchedLoves = allLoves
+                                            .where((Love love) => direction ==
+                                                    "からの"
+                                                ? love.fromIndex == revealIndex
+                                                : love.toIndex == revealIndex)
+                                            .toList();
+                                        isOpened = true;
+                                        if (matchedLoves.isEmpty) {
+                                          showDialog(
+                                            context: context,
+                                            builder: (BuildContext context) {
+                                              return AlertDialog(
+                                                title: const Text('ごめんなさい'),
+                                                content: const Text(
+                                                    '気になる人はいなかったみたい...'),
+                                                actions: <Widget>[
+                                                  TextButton(
+                                                    child: const Text('戻る'),
+                                                    onPressed: () {
+                                                      Navigator.of(context)
+                                                          .pop();
+                                                      Navigator.of(context)
+                                                          .pop();
+                                                    },
+                                                  ),
+                                                ],
+                                              );
+                                            },
+                                          );
+                                        } else {
+                                          lines = matchedLoves.map((Love love) {
+                                            final RenderBox renderBoxFrom =
+                                                globalKeys[love.fromIndex]
+                                                        .currentContext!
+                                                        .findRenderObject()
+                                                    as RenderBox;
+                                            final RenderBox renderBoxTo =
+                                                globalKeys[love.toIndex]
+                                                        .currentContext!
+                                                        .findRenderObject()
+                                                    as RenderBox;
+                                            final topLeftPositionFrom =
+                                                renderBoxFrom
+                                                    .localToGlobal(Offset.zero);
+                                            final topLeftPositionTo =
+                                                renderBoxTo
+                                                    .localToGlobal(Offset.zero);
+                                            final centerPositionFrom =
+                                                topLeftPositionFrom.translate(
+                                              renderBoxFrom.size.width / 2,
+                                              renderBoxFrom.size.height / 2,
                                             );
-                                          },
-                                        );
-                                      } else {
-                                        lines = matchedLoves.map((Love love) {
-                                          final RenderBox renderBoxFrom =
-                                              globalKeys[love.fromIndex]
-                                                      .currentContext!
-                                                      .findRenderObject()
-                                                  as RenderBox;
-                                          final RenderBox renderBoxTo =
-                                              globalKeys[love.toIndex]
-                                                      .currentContext!
-                                                      .findRenderObject()
-                                                  as RenderBox;
-                                          final topLeftPositionFrom =
-                                              renderBoxFrom
-                                                  .localToGlobal(Offset.zero);
-                                          final topLeftPositionTo = renderBoxTo
-                                              .localToGlobal(Offset.zero);
-                                          final centerPositionFrom =
-                                              topLeftPositionFrom.translate(
-                                            renderBoxFrom.size.width / 2,
-                                            renderBoxFrom.size.height / 2,
-                                          );
-                                          final centerPositionTo =
-                                              topLeftPositionTo.translate(
-                                            renderBoxTo.size.width / 2,
-                                            renderBoxTo.size.height / 2,
-                                          );
+                                            final centerPositionTo =
+                                                topLeftPositionTo.translate(
+                                              renderBoxTo.size.width / 2,
+                                              renderBoxTo.size.height / 2,
+                                            );
 
-                                          return Line(
-                                              startX: centerPositionFrom.dx,
-                                              startY: centerPositionFrom.dy -
-                                                  102 +
-                                                  100 +
-                                                  2,
-                                              endX: centerPositionTo.dx,
-                                              endY: centerPositionTo.dy -
-                                                  102 +
-                                                  100 +
-                                                  2);
-                                        }).toList();
-                                        _controller.forward(from: 0);
-                                        Navigator.of(context).pop();
-                                      }
-                                    });
+                                            return Line(
+                                                startX: centerPositionFrom.dx,
+                                                startY: centerPositionFrom.dy -
+                                                    102 +
+                                                    100 +
+                                                    2,
+                                                endX: centerPositionTo.dx,
+                                                endY: centerPositionTo.dy -
+                                                    102 +
+                                                    100 +
+                                                    2);
+                                          }).toList();
+                                          _controller.forward(from: 0);
+                                          Navigator.of(context).pop();
+                                        }
+                                      });
+                                    }
                                   });
                                 },
                               ),
@@ -415,6 +430,7 @@ class _CouplingPageState extends State<CouplingPage>
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.deepPurple,
+                    foregroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(
                         horizontal: 50, vertical: 15),
                     textStyle: const TextStyle(
@@ -449,9 +465,11 @@ class _CouplingPageState extends State<CouplingPage>
                                   var couple = getCouple(
                                       matchedLoves, pickedMember, allMembers);
                                   _showPopUp(context, couple);
-                                  setState(() {
-                                    isOpened = false;
-                                  });
+                                  if (mounted) {
+                                    setState(() {
+                                      isOpened = false;
+                                    });
+                                  }
                                 },
                               ),
                             ],

@@ -130,20 +130,15 @@ class FinalPage extends StatelessWidget {
                     TextButton(
                       child: const Text('OK'),
                       onPressed: () {
-                        ref
-                            .read(memberNumProvider.notifier)
-                            .update((state) => 0);
-                        ref
-                            .read(memberIndexProvider.notifier)
-                            .update((state) => 0);
-                        ref
-                            .read(membersProvider.notifier)
-                            .update((state) => []);
-                        Navigator.push(
-                          context,
+                        ref.read(memberNumProvider.notifier).state = 0;
+                        ref.read(memberIndexProvider.notifier).state = 0;
+                        ref.read(membersProvider.notifier).state = [];
+                        ref.read(isTestModeProvider.notifier).state = false;
+                        Navigator.of(context).pushAndRemoveUntil(
                           MaterialPageRoute(
                               builder: (context) =>
                                   const HomePage(title: 'ドキドキマッチング！！')),
+                          (route) => false,
                         );
                       },
                     ),
@@ -201,7 +196,9 @@ Widget _buildRoundedImage(Size deviceSize, String imagePath) {
     decoration: BoxDecoration(
       borderRadius: BorderRadius.circular(20.0), // ここで角をフィレットに
       image: DecorationImage(
-        image: FileImage(File(imagePath)),
+        image: imagePath.startsWith('assets/')
+            ? AssetImage(imagePath) as ImageProvider
+            : FileImage(File(imagePath)),
         fit: BoxFit.cover,
       ),
     ),
