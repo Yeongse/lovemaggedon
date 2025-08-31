@@ -192,51 +192,56 @@ class _ChoosePageState extends State<ChoosePage> {
       final Member chooser = allMembers[index];
 
       return Scaffold(
-          body: LayoutBuilder(builder: (context, viewportConstraints) {
-        return SingleChildScrollView(
-          child: ConstrainedBox(
-            constraints:
-                BoxConstraints(minHeight: viewportConstraints.maxHeight),
-            child: Container(
-              width: double.infinity,
-              decoration: const BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage('assets/background.png'),
-                  fit: BoxFit.cover,
-                ),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(height: 50.0),
-                    const Text(
-                      "お相手の皆さん",
-                      style: TextStyle(
-                        fontSize: 20.0,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.pinkAccent,
-                      ),
+        body: Container(
+          decoration: const BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage('assets/background.png'),
+              fit: BoxFit.cover,
+            ),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    "${chooser.name}さん\n気になる相手を選んでね♡",
+                    style: const TextStyle(
+                      fontFamily: 'Bebas Neue',
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.red,
                     ),
-                    const SizedBox(height: 12.0),
-                    SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Row(
-                        children: (chooser.sex == "男の子" ? females : males)
-                            .map((member) => LargeMemberRadioComponent(
-                                  member: member,
-                                ))
-                            .toList(),
-                      ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 30.0),
+                  const Text(
+                    "お相手の皆さん",
+                    style: TextStyle(
+                      fontSize: 20.0,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.pinkAccent,
                     ),
-                  ],
-                ),
+                  ),
+                  const SizedBox(height: 20.0),
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: (chooser.sex == "男の子" ? females : males)
+                          .map((member) => LargeMemberRadioComponent(
+                                member: member,
+                              ))
+                          .toList(),
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
-        );
-      }));
+        ),
+      );
     });
   }
 }
