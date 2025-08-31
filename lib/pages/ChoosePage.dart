@@ -215,25 +215,40 @@ class _ChoosePageState extends State<ChoosePage> {
                     ),
                     textAlign: TextAlign.center,
                   ),
-                  const SizedBox(height: 30.0),
-                  const Text(
-                    "お相手の皆さん",
-                    style: TextStyle(
-                      fontSize: 20.0,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.pinkAccent,
+                  const SizedBox(height: 8.0),
+                  if ((chooser.sex == "男の子" ? females : males).length >
+                      2) // 3人以上の場合のみ表示
+                    const Text(
+                      "← スワイプで全員見れるよ →",
+                      style: TextStyle(
+                        fontSize: 12.0,
+                        color: Colors.grey,
+                        fontStyle: FontStyle.italic,
+                      ),
+                      textAlign: TextAlign.center,
                     ),
-                  ),
                   const SizedBox(height: 20.0),
-                  SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: (chooser.sex == "男の子" ? females : males)
-                          .map((member) => LargeMemberRadioComponent(
-                                member: member,
-                              ))
-                          .toList(),
+                  Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12.0),
+                      color: Colors.pink.withOpacity(0.1),
+                      border: Border.all(
+                        color: Colors.pinkAccent.withOpacity(0.3),
+                        width: 1,
+                      ),
+                    ),
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 8.0, horizontal: 4.0),
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: (chooser.sex == "男の子" ? females : males)
+                            .map((member) => LargeMemberRadioComponent(
+                                  member: member,
+                                ))
+                            .toList(),
+                      ),
                     ),
                   ),
                 ],

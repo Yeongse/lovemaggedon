@@ -331,11 +331,39 @@ class _CouplingPageState extends State<CouplingPage>
                                             context: context,
                                             builder: (BuildContext context) {
                                               return AlertDialog(
-                                                title: const Text('ごめんなさい'),
+                                                icon: const Icon(
+                                                  Icons.sentiment_dissatisfied,
+                                                  color: Colors.orange,
+                                                  size: 48,
+                                                ),
+                                                title: const Text(
+                                                  '残念',
+                                                  style: TextStyle(
+                                                    color: Colors.orange,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
                                                 content: const Text(
                                                     '気になる人はいなかったみたい...'),
+                                                backgroundColor: Colors.white,
                                                 actions: <Widget>[
                                                   TextButton(
+                                                    style: TextButton.styleFrom(
+                                                      backgroundColor:
+                                                          Colors.orange,
+                                                      foregroundColor:
+                                                          Colors.white,
+                                                      padding: const EdgeInsets
+                                                          .symmetric(
+                                                          horizontal: 20,
+                                                          vertical: 10),
+                                                      shape:
+                                                          RoundedRectangleBorder(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(8),
+                                                      ),
+                                                    ),
                                                     child: const Text('戻る'),
                                                     onPressed: () {
                                                       Navigator.of(context)
@@ -406,10 +434,31 @@ class _CouplingPageState extends State<CouplingPage>
                         context: context,
                         builder: (BuildContext context) {
                           return AlertDialog(
-                            title: const Text('ごめんなさい'),
+                            icon: const Icon(
+                              Icons.warning,
+                              color: Colors.amber,
+                              size: 48,
+                            ),
+                            title: const Text(
+                              '選択してください',
+                              style: TextStyle(
+                                color: Colors.amber,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                             content: const Text('誰の気持ちを確認するか決めてね！'),
+                            backgroundColor: Colors.white,
                             actions: <Widget>[
                               TextButton(
+                                style: TextButton.styleFrom(
+                                  backgroundColor: Colors.amber,
+                                  foregroundColor: Colors.white,
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 20, vertical: 10),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                ),
                                 child: const Text('戻る'),
                                 onPressed: () {
                                   Navigator.of(context).pop();
@@ -481,10 +530,31 @@ class _CouplingPageState extends State<CouplingPage>
                         context: context,
                         builder: (BuildContext context) {
                           return AlertDialog(
-                            title: const Text('ごめんなさい'),
+                            icon: const Icon(
+                              Icons.info,
+                              color: Colors.blue,
+                              size: 48,
+                            ),
+                            title: const Text(
+                              '手順の確認',
+                              style: TextStyle(
+                                color: Colors.blue,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                             content: const Text('結果は気持ちを確認した後でお願い'),
+                            backgroundColor: Colors.white,
                             actions: <Widget>[
                               TextButton(
+                                style: TextButton.styleFrom(
+                                  backgroundColor: Colors.blue,
+                                  foregroundColor: Colors.white,
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 20, vertical: 10),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                ),
                                 child: const Text('戻る'),
                                 onPressed: () {
                                   Navigator.of(context).pop();

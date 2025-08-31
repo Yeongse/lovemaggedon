@@ -189,33 +189,65 @@ class _RegisterPageState extends State<RegisterPage> {
                       ),
                       child: const Text('登録する'),
                       onPressed: () {
-                        showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return AlertDialog(
-                              title: const Text('確認'),
-                              content: const Text('この内容で登録しても大丈夫？？'),
-                              actions: <Widget>[
-                                TextButton(
-                                  child: const Text('キャンセル'),
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                  },
+                        // まず入力チェックを行う
+                        if (sex.isEmpty || name.isEmpty) {
+                          // sexまたはnameが空の場合、エラーモーダルを表示
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                icon: const Icon(
+                                  Icons.error,
+                                  color: Colors.red,
+                                  size: 48,
                                 ),
-                                TextButton(
-                                  child: const Text('OK'),
-                                  onPressed: () {
-                                    if (sex.isEmpty || name.isEmpty) {
-                                      // sexまたはnameが空の場合、スナックバーを表示
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(
-                                        const SnackBar(
-                                          content: Text('性別と名前を入力してね！'),
-                                          duration: Duration(seconds: 2),
-                                          backgroundColor: Colors.red,
-                                        ),
-                                      );
-                                    } else {
+                                title: const Text(
+                                  '入力不足',
+                                  style: TextStyle(
+                                    color: Colors.red,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                content: const Text('性別と名前を入力してね！'),
+                                backgroundColor: Colors.white,
+                                actions: <Widget>[
+                                  TextButton(
+                                    style: TextButton.styleFrom(
+                                      backgroundColor: Colors.red,
+                                      foregroundColor: Colors.white,
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 20, vertical: 10),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                    ),
+                                    child: const Text('OK'),
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        } else {
+                          // 入力に問題がない場合、確認モーダルを表示
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: const Text('確認'),
+                                content: const Text('この内容で登録しても大丈夫？？'),
+                                actions: <Widget>[
+                                  TextButton(
+                                    child: const Text('キャンセル'),
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                  ),
+                                  TextButton(
+                                    child: const Text('OK'),
+                                    onPressed: () {
                                       final String imagePathToSave = isTest
                                           ? (sex == '女の子'
                                               ? 'assets/female_sanple.png'
@@ -238,13 +270,13 @@ class _RegisterPageState extends State<RegisterPage> {
                                             builder: (context) =>
                                                 const GuidePage()),
                                       );
-                                    }
-                                  },
-                                ),
-                              ],
-                            );
-                          },
-                        );
+                                    },
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        }
                       },
                     )
                   ],

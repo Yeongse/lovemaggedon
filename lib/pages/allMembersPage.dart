@@ -119,98 +119,163 @@ class AllMembersPage extends StatelessWidget {
       List<Member> females =
           allMembers.where((member) => member.sex == '女の子').toList();
       return Scaffold(
-          body: LayoutBuilder(builder: (context, viewportConstraints) {
-        return SingleChildScrollView(
-          child: ConstrainedBox(
-            constraints: BoxConstraints(
-              minHeight: viewportConstraints.maxHeight,
+        body: Container(
+          decoration: const BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage("assets/background2.png"),
+              fit: BoxFit.cover,
             ),
-            child: Container(
-              width: double.infinity,
-              decoration: const BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage("assets/background2.png"),
-                  fit: BoxFit.cover,
-                ),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(height: 60.0),
+          ),
+          child: Center(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text(
+                        "男の子の参加者",
+                        style: TextStyle(
+                          fontSize: 20.0,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.blueAccent,
+                        ),
+                      ),
+                      const SizedBox(width: 8.0),
+                      if (males.length > 2) // 3人以上の場合のみ表示
+                        const Icon(
+                          Icons.swipe_left,
+                          color: Colors.blueAccent,
+                          size: 20,
+                        ),
+                    ],
+                  ),
+                  const SizedBox(height: 8.0),
+                  if (males.length > 2) // 3人以上の場合のみ表示
                     const Text(
-                      "男の子の参加者",
+                      "← スワイプで全員見れるよ →",
                       style: TextStyle(
-                        fontSize: 20.0,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.blueAccent,
+                        fontSize: 12.0,
+                        color: Colors.grey,
+                        fontStyle: FontStyle.italic,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  const SizedBox(height: 12.0),
+                  Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12.0),
+                      color: Colors.blue.withOpacity(0.1),
+                      border: Border.all(
+                        color: Colors.blueAccent.withOpacity(0.3),
+                        width: 1,
                       ),
                     ),
-                    const SizedBox(height: 12.0),
-                    SingleChildScrollView(
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 8.0, horizontal: 4.0),
+                    child: SingleChildScrollView(
                       scrollDirection: Axis.horizontal,
                       child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: males
                             .map((maleMember) =>
                                 MemberComponent(member: maleMember))
                             .toList(),
                       ),
                     ),
-                    const SizedBox(height: 24.0),
+                  ),
+                  const SizedBox(height: 24.0),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text(
+                        "女の子の参加者",
+                        style: TextStyle(
+                          fontSize: 20.0,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.pinkAccent,
+                        ),
+                      ),
+                      const SizedBox(width: 8.0),
+                      if (females.length > 2) // 3人以上の場合のみ表示
+                        const Icon(
+                          Icons.swipe_left,
+                          color: Colors.pinkAccent,
+                          size: 20,
+                        ),
+                    ],
+                  ),
+                  const SizedBox(height: 8.0),
+                  if (females.length > 2) // 3人以上の場合のみ表示
                     const Text(
-                      "女の子の参加者",
+                      "← スワイプで全員見れるよ →",
                       style: TextStyle(
-                        fontSize: 20.0,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.pinkAccent,
+                        fontSize: 12.0,
+                        color: Colors.grey,
+                        fontStyle: FontStyle.italic,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  const SizedBox(height: 12.0),
+                  Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12.0),
+                      color: Colors.pink.withOpacity(0.1),
+                      border: Border.all(
+                        color: Colors.pinkAccent.withOpacity(0.3),
+                        width: 1,
                       ),
                     ),
-                    const SizedBox(height: 12.0),
-                    SingleChildScrollView(
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 8.0, horizontal: 4.0),
+                    child: SingleChildScrollView(
                       scrollDirection: Axis.horizontal,
                       child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: females
                             .map((femaleMember) =>
                                 MemberComponent(member: femaleMember))
                             .toList(),
                       ),
                     ),
-                    const SizedBox(height: 24.0),
-                    Center(
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.deepPurple,
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 20, vertical: 12),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10.0),
-                          ),
+                  ),
+                  const SizedBox(height: 24.0),
+                  Center(
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.deepPurple,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 20, vertical: 12),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.0),
                         ),
-                        child: const Text(
-                          '気になる相手を選ぶ',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
-                          ),
-                        ),
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const MatchGuidePage()),
-                          );
-                        },
                       ),
+                      child: const Text(
+                        '気になる相手を選ぶ',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                      ),
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const MatchGuidePage()),
+                        );
+                      },
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
           ),
-        );
-      }));
+        ),
+      );
     });
   }
 }
