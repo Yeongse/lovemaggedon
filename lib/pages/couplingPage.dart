@@ -1,12 +1,12 @@
 import 'dart:io';
 import 'dart:async';
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/member.dart';
 import '../models/love.dart';
 import '../models/line.dart';
 import '../providers.dart';
-import 'dart:math' as math;
 import './finalPage.dart';
 
 class SmallMemberRadioComponent extends StatefulWidget {
@@ -37,7 +37,7 @@ class _SmallMemberRadioComponentState extends State<SmallMemberRadioComponent> {
     final deviceSize = MediaQuery.of(context).size;
 
     // 画像のサイズを定義
-    double imageWidth = deviceSize.width * (widget.isSmall ? 0.15 : 0.3);
+    double imageWidth = deviceSize.width * (widget.isSmall ? 0.12 : 0.3);
     double imageHeight = imageWidth * 1.5; // 画像を長方形にするために高さを1.5倍にします。
 
     List<Widget> mainChildren = [
@@ -118,8 +118,12 @@ class _CouplingPageState extends State<CouplingPage>
   bool isOpened = false;
   bool isInitialTimePassed = false;
 
+  // 新しいフェーズ管理: 0=初期, 1=気持ち確認済み, 2=結果確認済み
+  int currentPhase = 0;
+
   late List<GlobalKey> globalKeys;
   late List<Love> allLoves;
+  late List<Member> allMembers;
 
   @override
   void initState() {
@@ -158,7 +162,7 @@ class _CouplingPageState extends State<CouplingPage>
     return Consumer(builder: (context, ref, child) {
       final deviceSize = MediaQuery.of(context).size;
       final memberNum = ref.watch(memberNumProvider);
-      final allMembers = ref.watch(membersProvider);
+      allMembers = ref.watch(membersProvider);
       List<Member> males =
           allMembers.where((member) => member.sex == '男の子').toList();
       List<Member> females =
@@ -178,446 +182,522 @@ class _CouplingPageState extends State<CouplingPage>
               fit: BoxFit.cover,
             ),
           ),
-          child: SingleChildScrollView(
-            child: Column(children: [
-              CustomPaint(
-                painter:
-                    MultiLinePainter(lines: lines, progress: _animation.value),
-                child: Container(),
-              ),
-              const SizedBox(height: 24.0),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Column(
-                    children: males
-                        .map((maleMember) => SmallMemberRadioComponent(
-                              globalKey: globalKeys[maleMember.index],
-                              member: maleMember,
-                            ))
-                        .toList(),
-                  ),
-                  Column(
-                    children: females
-                        .map((femaleMember) => SmallMemberRadioComponent(
-                              globalKey: globalKeys[femaleMember.index],
-                              member: femaleMember,
-                            ))
-                        .toList(),
-                  ),
-                ],
-              ),
-              Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
-                SizedBox(
-                  width: deviceSize.width * 0.4,
-                  child: DropdownButtonFormField<int>(
-                    decoration: InputDecoration(
-                      labelText: '誰かを選んでね',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                      ),
-                      contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 9, vertical: 12),
-                      errorStyle:
-                          const TextStyle(color: Colors.redAccent, fontSize: 8),
-                    ),
-                    dropdownColor: Colors.white,
-                    value: revealIndex == -1 ? null : revealIndex,
-                    hint: const Text('誰の気持ち？'),
-                    icon: const Icon(Icons.arrow_drop_down,
-                        color: Colors.blueGrey),
-                    items:
-                        allMembers.map<DropdownMenuItem<int>>((Member member) {
-                      return DropdownMenuItem<int>(
-                        value: member.index,
-                        child: Text(
-                          member.name,
-                          style: const TextStyle(color: Colors.black87),
-                        ),
-                      );
-                    }).toList(),
-                    onChanged: (newRevealIndex) {
-                      setState(() {
-                        revealIndex = newRevealIndex!;
-                      });
-                    },
-                  ),
-                ),
-                SizedBox(
-                  width: deviceSize.width * 0.4,
-                  child: DropdownButtonFormField<String>(
-                    decoration: InputDecoration(
-                      labelText: '向きを選択してね',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                      ),
-                      contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 12, vertical: 15),
-                      errorStyle: const TextStyle(
-                          color: Colors.redAccent, fontSize: 12),
-                    ),
-                    dropdownColor: Colors.white,
-                    value: direction,
-                    hint: const Text('どっち向き？'),
-                    icon: const Icon(Icons.arrow_drop_down,
-                        color: Colors.blueGrey),
-                    items: ["からの", "への"]
-                        .map<DropdownMenuItem<String>>((String direction) {
-                      return DropdownMenuItem<String>(
-                        value: direction,
-                        child: Text(
-                          direction,
-                          style: const TextStyle(color: Colors.black87),
-                        ),
-                      );
-                    }).toList(),
-                    onChanged: (newDirection) {
-                      setState(() {
-                        direction = newDirection!;
-                      });
-                    },
-                  ),
-                )
-              ]),
-              // 線引くボタン
-              Container(
-                margin: const EdgeInsets.all(10),
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.deepPurple,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 50, vertical: 15),
-                    textStyle: const TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold,
-                    ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10.0),
-                    ),
-                  ),
-                  onPressed: () {
-                    if (revealIndex != -1) {
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            title: const Text('確認'),
-                            content: Text(
-                                '${allMembers[revealIndex].name}$direction気持ちを確認しても良い？'),
-                            actions: <Widget>[
-                              TextButton(
-                                child: const Text('キャンセル'),
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
+          child: Column(children: [
+            // 上部余白
+            const SizedBox(height: 20.0),
+            // スクロール可能な線描画エリア（画面の80%）
+            Container(
+              height: deviceSize.height * 0.8,
+              child: SingleChildScrollView(
+                child: Column(children: [
+                  // 上部余白
+                  const SizedBox(height: 20.0),
+                  // 左右余白付きStack
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    child: Stack(
+                      children: [
+                        Container(
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              colors: [
+                                Colors.pink.withOpacity(0.08),
+                                Colors.purple.withOpacity(0.12),
+                                Colors.deepPurple.withOpacity(0.08),
+                                Colors.pink.withOpacity(0.06),
+                              ],
+                              stops: const [0.0, 0.3, 0.7, 1.0],
+                            ),
+                            borderRadius: BorderRadius.circular(20.0),
+                            border: Border.all(
+                              color: Colors.pink.withOpacity(0.3),
+                              width: 2.0,
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.pink.withOpacity(0.15),
+                                blurRadius: 12.0,
+                                offset: const Offset(0, 4),
                               ),
-                              TextButton(
-                                child: const Text('OK'),
-                                onPressed: () {
-                                  WidgetsBinding.instance
-                                      .addPostFrameCallback((_) {
-                                    if (mounted) {
-                                      setState(() {
-                                        matchedLoves = allLoves
-                                            .where((Love love) => direction ==
-                                                    "からの"
-                                                ? love.fromIndex == revealIndex
-                                                : love.toIndex == revealIndex)
-                                            .toList();
-                                        isOpened = true;
-                                        if (matchedLoves.isEmpty) {
-                                          showDialog(
-                                            context: context,
-                                            builder: (BuildContext context) {
-                                              return AlertDialog(
-                                                icon: const Icon(
-                                                  Icons.sentiment_dissatisfied,
-                                                  color: Colors.orange,
-                                                  size: 48,
-                                                ),
-                                                title: const Text(
-                                                  '残念',
-                                                  style: TextStyle(
-                                                    color: Colors.orange,
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                                ),
-                                                content: const Text(
-                                                    '気になる人はいなかったみたい...'),
-                                                backgroundColor: Colors.white,
-                                                actions: <Widget>[
-                                                  TextButton(
-                                                    style: TextButton.styleFrom(
-                                                      backgroundColor:
-                                                          Colors.orange,
-                                                      foregroundColor:
-                                                          Colors.white,
-                                                      padding: const EdgeInsets
-                                                          .symmetric(
-                                                          horizontal: 20,
-                                                          vertical: 10),
-                                                      shape:
-                                                          RoundedRectangleBorder(
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(8),
-                                                      ),
-                                                    ),
-                                                    child: const Text('戻る'),
-                                                    onPressed: () {
-                                                      Navigator.of(context)
-                                                          .pop();
-                                                      Navigator.of(context)
-                                                          .pop();
-                                                    },
-                                                  ),
-                                                ],
-                                              );
-                                            },
-                                          );
-                                        } else {
-                                          lines = matchedLoves.map((Love love) {
-                                            final RenderBox renderBoxFrom =
-                                                globalKeys[love.fromIndex]
-                                                        .currentContext!
-                                                        .findRenderObject()
-                                                    as RenderBox;
-                                            final RenderBox renderBoxTo =
-                                                globalKeys[love.toIndex]
-                                                        .currentContext!
-                                                        .findRenderObject()
-                                                    as RenderBox;
-                                            final topLeftPositionFrom =
-                                                renderBoxFrom
-                                                    .localToGlobal(Offset.zero);
-                                            final topLeftPositionTo =
-                                                renderBoxTo
-                                                    .localToGlobal(Offset.zero);
-                                            final centerPositionFrom =
-                                                topLeftPositionFrom.translate(
-                                              renderBoxFrom.size.width / 2,
-                                              renderBoxFrom.size.height / 2,
-                                            );
-                                            final centerPositionTo =
-                                                topLeftPositionTo.translate(
-                                              renderBoxTo.size.width / 2,
-                                              renderBoxTo.size.height / 2,
-                                            );
-
-                                            return Line(
-                                                startX: centerPositionFrom.dx,
-                                                startY: centerPositionFrom.dy -
-                                                    102 +
-                                                    100 +
-                                                    2,
-                                                endX: centerPositionTo.dx,
-                                                endY: centerPositionTo.dy -
-                                                    102 +
-                                                    100 +
-                                                    2);
-                                          }).toList();
-                                          _controller.forward(from: 0);
-                                          Navigator.of(context).pop();
-                                        }
-                                      });
-                                    }
-                                  });
-                                },
+                              BoxShadow(
+                                color: Colors.purple.withOpacity(0.1),
+                                blurRadius: 20.0,
+                                offset: const Offset(0, 8),
                               ),
                             ],
-                          );
-                        },
-                      );
-                    } else {
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            icon: const Icon(
-                              Icons.warning,
-                              color: Colors.amber,
-                              size: 48,
-                            ),
-                            title: const Text(
-                              '選択してください',
-                              style: TextStyle(
-                                color: Colors.amber,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            content: const Text('誰の気持ちを確認するか決めてね！'),
-                            backgroundColor: Colors.white,
-                            actions: <Widget>[
-                              TextButton(
-                                style: TextButton.styleFrom(
-                                  backgroundColor: Colors.amber,
-                                  foregroundColor: Colors.white,
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 20, vertical: 10),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: CustomPaint(
+                            painter: MultiLinePainter(
+                                lines: lines, progress: _animation.value),
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: males
+                                        .map((maleMember) =>
+                                            SmallMemberRadioComponent(
+                                              globalKey:
+                                                  globalKeys[maleMember.index],
+                                              member: maleMember,
+                                            ))
+                                        .toList(),
                                   ),
-                                ),
-                                child: const Text('戻る'),
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
-                              ),
-                            ],
-                          );
-                        },
-                      );
-                    }
-                  },
-                  child: const Text('気持ちを確認する♡'),
-                ),
-              ),
-              // 結ばれたか確認ボタン
-              Container(
-                margin: const EdgeInsets.all(10),
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.deepPurple,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 50, vertical: 15),
-                    textStyle: const TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold,
-                    ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10.0),
-                    ),
-                  ),
-                  child: const Text('結ばれたか確認する'),
-                  onPressed: () {
-                    if (isOpened == true) {
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            title: const Text('確認'),
-                            content: const Text('お相手の気持ちを確認して良い？'),
-                            actions: <Widget>[
-                              TextButton(
-                                child: const Text('キャンセル'),
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
-                              ),
-                              TextButton(
-                                child: const Text('OK'),
-                                onPressed: () {
-                                  var pickedMember =
-                                      allMembers[matchedLoves[0].toIndex];
-                                  var couple = getCouple(
-                                      matchedLoves, pickedMember, allMembers);
-                                  _showPopUp(context, couple);
-                                  if (mounted) {
-                                    setState(() {
-                                      isOpened = false;
-                                    });
-                                  }
-                                },
-                              ),
-                            ],
-                          );
-                        },
-                      );
-                    } else {
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            icon: const Icon(
-                              Icons.info,
-                              color: Colors.blue,
-                              size: 48,
-                            ),
-                            title: const Text(
-                              '手順の確認',
-                              style: TextStyle(
-                                color: Colors.blue,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            content: const Text('結果は気持ちを確認した後でお願い'),
-                            backgroundColor: Colors.white,
-                            actions: <Widget>[
-                              TextButton(
-                                style: TextButton.styleFrom(
-                                  backgroundColor: Colors.blue,
-                                  foregroundColor: Colors.white,
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 20, vertical: 10),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8),
+                                  Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: females
+                                        .map((femaleMember) =>
+                                            SmallMemberRadioComponent(
+                                              globalKey: globalKeys[
+                                                  femaleMember.index],
+                                              member: femaleMember,
+                                            ))
+                                        .toList(),
                                   ),
-                                ),
-                                child: const Text('戻る'),
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
+                                ],
                               ),
-                            ],
-                          );
-                        },
-                      );
-                    }
-                  },
-                ),
-              ),
-              // 最終結果確認ボタン
-              Container(
-                margin: const EdgeInsets.only(top: 40),
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    foregroundColor: Colors.white,
-                    backgroundColor: Colors.blue, // もう少し淡いピンク色に変更
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30),
-                    ),
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 20, vertical: 12),
-                    elevation: 5,
-                  ),
-                  child: const Text('最終結果を確認する'),
-                  onPressed: () {
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return AlertDialog(
-                          title: const Text('確認'),
-                          content: const Text('最終結果を確認して良い？\n※全員の結果が見えてしまうよ'),
-                          actions: <Widget>[
-                            TextButton(
-                              child: const Text('キャンセル'),
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
                             ),
-                            TextButton(
-                              child: const Text('OK'),
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => const FinalPage()),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ]),
+              ),
+            ),
+            // 下部UI（残りのスペース）
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // 横一列にした操作UI
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Expanded(
+                          flex: 3,
+                          child: Container(
+                            margin: const EdgeInsets.symmetric(horizontal: 2.0),
+                            child: DropdownButtonFormField<int>(
+                              decoration: InputDecoration(
+                                labelText: '誰？',
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8.0),
+                                ),
+                                contentPadding: const EdgeInsets.symmetric(
+                                    horizontal: 8, vertical: 8),
+                                errorStyle: const TextStyle(
+                                    color: Colors.redAccent, fontSize: 8),
+                              ),
+                              dropdownColor: Colors.white,
+                              value: revealIndex == -1 ? null : revealIndex,
+                              hint: const Text('選択',
+                                  style: TextStyle(fontSize: 12)),
+                              icon: const Icon(Icons.arrow_drop_down,
+                                  color: Colors.blueGrey, size: 20),
+                              items: allMembers
+                                  .map<DropdownMenuItem<int>>((Member member) {
+                                return DropdownMenuItem<int>(
+                                  value: member.index,
+                                  child: Text(
+                                    member.name,
+                                    style: const TextStyle(
+                                        color: Colors.black87, fontSize: 12),
+                                  ),
                                 );
+                              }).toList(),
+                              onChanged: (newRevealIndex) {
+                                setState(() {
+                                  revealIndex = newRevealIndex!;
+                                });
                               },
                             ),
-                          ],
-                        );
-                      },
-                    );
-                  },
+                          ),
+                        ),
+                        Expanded(
+                          flex: 2,
+                          child: Container(
+                            margin: const EdgeInsets.symmetric(horizontal: 2.0),
+                            child: DropdownButtonFormField<String>(
+                              decoration: InputDecoration(
+                                labelText: '向き',
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8.0),
+                                ),
+                                contentPadding: const EdgeInsets.symmetric(
+                                    horizontal: 8, vertical: 8),
+                                errorStyle: const TextStyle(
+                                    color: Colors.redAccent, fontSize: 8),
+                              ),
+                              dropdownColor: Colors.white,
+                              value: direction,
+                              hint: const Text('？',
+                                  style: TextStyle(fontSize: 12)),
+                              icon: const Icon(Icons.arrow_drop_down,
+                                  color: Colors.blueGrey, size: 20),
+                              items: ["からの", "への"]
+                                  .map<DropdownMenuItem<String>>(
+                                      (String direction) {
+                                return DropdownMenuItem<String>(
+                                  value: direction,
+                                  child: Text(
+                                    direction,
+                                    style: const TextStyle(
+                                        color: Colors.black87, fontSize: 12),
+                                  ),
+                                );
+                              }).toList(),
+                              onChanged: (newDirection) {
+                                setState(() {
+                                  direction = newDirection!;
+                                });
+                              },
+                            ),
+                          ),
+                        ),
+                        // ボタンをRowに追加
+                        Expanded(
+                          flex: 2,
+                          child: Container(
+                            margin: const EdgeInsets.symmetric(horizontal: 2.0),
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.deepPurple,
+                                foregroundColor: Colors.white,
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 4, vertical: 8),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(4.0),
+                                ),
+                                minimumSize: const Size(0, 20),
+                              ),
+                              onPressed: _handleButtonPress,
+                              child: _getButtonWidget(),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    // 最終結果確認ボタン
+                    Container(
+                      margin: const EdgeInsets.only(top: 10),
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          foregroundColor: Colors.white,
+                          backgroundColor: Colors.blue, // もう少し淡いピンク色に変更
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 20, vertical: 12),
+                          elevation: 5,
+                        ),
+                        child: const Text('最終結果を確認する'),
+                        onPressed: () {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: const Text('確認'),
+                                content:
+                                    const Text('最終結果を確認して良い？\n※全員の結果が見えてしまうよ'),
+                                actions: <Widget>[
+                                  TextButton(
+                                    child: const Text('キャンセル'),
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                  ),
+                                  TextButton(
+                                    child: const Text('OK'),
+                                    onPressed: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                const FinalPage()),
+                                      );
+                                    },
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        },
+                      ),
+                    ),
+                  ],
                 ),
               ),
-            ]),
-          ),
+            ),
+          ]),
         ),
       );
+    });
+  }
+
+  Widget _getButtonWidget() {
+    switch (currentPhase) {
+      case 0:
+        return const Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text('気持ちを',
+                style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+            Text('確認する♡',
+                style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+          ],
+        );
+      case 1:
+        return const Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text('結ばれたか',
+                style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+            Text('確認する',
+                style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+          ],
+        );
+      case 2:
+        return const Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text('気持ちを',
+                style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+            Text('確認する♡',
+                style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+          ],
+        );
+      default:
+        return const Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text('気持ちを',
+                style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+            Text('確認する♡',
+                style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+          ],
+        );
+    }
+  }
+
+  // ボタン押下時の処理
+  void _handleButtonPress() {
+    if (currentPhase == 0) {
+      _handleFeelingsCheck();
+    } else if (currentPhase == 1) {
+      _handleCoupleCheck();
+    } else if (currentPhase == 2) {
+      _resetAndStartNew();
+    }
+  }
+
+  // 気持ち確認処理
+  void _handleFeelingsCheck() {
+    if (revealIndex != -1) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('確認'),
+            content:
+                Text('${allMembers[revealIndex].name}$direction気持ちを確認しても良い？'),
+            actions: <Widget>[
+              TextButton(
+                child: const Text('キャンセル'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+              TextButton(
+                child: const Text('OK'),
+                onPressed: () {
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    if (mounted) {
+                      setState(() {
+                        matchedLoves = allLoves
+                            .where((Love love) => direction == "からの"
+                                ? love.fromIndex == revealIndex
+                                : love.toIndex == revealIndex)
+                            .toList();
+                        isOpened = true;
+                        if (matchedLoves.isEmpty) {
+                          currentPhase = 2; // 失敗時は次回リセット
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                icon: const Icon(
+                                  Icons.sentiment_dissatisfied,
+                                  color: Colors.orange,
+                                  size: 48,
+                                ),
+                                title: const Text(
+                                  '残念',
+                                  style: TextStyle(
+                                    color: Colors.orange,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                content: const Text('気になる人はいなかったみたい...'),
+                                backgroundColor: Colors.white,
+                                actions: <Widget>[
+                                  TextButton(
+                                    style: TextButton.styleFrom(
+                                      backgroundColor: Colors.orange,
+                                      foregroundColor: Colors.white,
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 20, vertical: 10),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                    ),
+                                    child: const Text('戻る'),
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                      Navigator.of(context).pop();
+                                    },
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        } else {
+                          lines = matchedLoves.map((Love love) {
+                            final RenderBox renderBoxFrom =
+                                globalKeys[love.fromIndex]
+                                    .currentContext!
+                                    .findRenderObject() as RenderBox;
+                            final RenderBox renderBoxTo =
+                                globalKeys[love.toIndex]
+                                    .currentContext!
+                                    .findRenderObject() as RenderBox;
+                            final topLeftPositionFrom =
+                                renderBoxFrom.localToGlobal(Offset.zero);
+                            final topLeftPositionTo =
+                                renderBoxTo.localToGlobal(Offset.zero);
+                            final centerPositionFrom =
+                                topLeftPositionFrom.translate(
+                              renderBoxFrom.size.width / 2,
+                              renderBoxFrom.size.height / 2,
+                            );
+                            final centerPositionTo =
+                                topLeftPositionTo.translate(
+                              renderBoxTo.size.width / 2,
+                              renderBoxTo.size.height / 2,
+                            );
+
+                            return Line(
+                                startX: centerPositionFrom.dx,
+                                startY: centerPositionFrom.dy - 102 + 100 + 2,
+                                endX: centerPositionTo.dx,
+                                endY: centerPositionTo.dy - 102 + 100 + 2);
+                          }).toList();
+                          _controller.forward(from: 0);
+                          currentPhase = 1; // 次は結果確認フェーズ
+                          Navigator.of(context).pop();
+                        }
+                      });
+                    }
+                  });
+                },
+              ),
+            ],
+          );
+        },
+      );
+    } else {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            icon: const Icon(
+              Icons.warning,
+              color: Colors.amber,
+              size: 48,
+            ),
+            title: const Text(
+              '選択してください',
+              style: TextStyle(
+                color: Colors.amber,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            content: const Text('誰の気持ちを確認するか決めてね！'),
+            backgroundColor: Colors.white,
+            actions: <Widget>[
+              TextButton(
+                style: TextButton.styleFrom(
+                  backgroundColor: Colors.amber,
+                  foregroundColor: Colors.white,
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+                child: const Text('戻る'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        },
+      );
+    }
+  }
+
+  // カップル確認処理
+  void _handleCoupleCheck() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('確認'),
+          content: const Text('お相手の気持ちを確認して良い？'),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('キャンセル'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('OK'),
+              onPressed: () {
+                var pickedMember = allMembers[matchedLoves[0].toIndex];
+                var couple = getCouple(matchedLoves, pickedMember, allMembers);
+                _showPopUp(context, couple);
+                if (mounted) {
+                  setState(() {
+                    isOpened = false;
+                    currentPhase = 2; // 次は新規確認フェーズ
+                  });
+                }
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  // リセットして新規開始
+  void _resetAndStartNew() {
+    setState(() {
+      currentPhase = 0;
+      revealIndex = -1;
+      isOpened = false;
+      lines.clear();
+      matchedLoves.clear();
     });
   }
 }
