@@ -118,8 +118,9 @@ class _CouplingPageState extends State<CouplingPage>
   bool isOpened = false;
   bool isInitialTimePassed = false;
 
-  // 新しいフェーズ管理: 0=初期, 1=気持ち確認済み, 2=結果確認済み
+  // 新しいフェーズ管理: 0=初期, 1=気持ち確認済み, 2=結果確認済み, 3=次の人確認準備
   int currentPhase = 0;
+  bool isInputLocked = false;
 
   late List<GlobalKey> globalKeys;
   late List<Love> allLoves;
@@ -295,29 +296,47 @@ class _CouplingPageState extends State<CouplingPage>
                                     horizontal: 8, vertical: 8),
                                 errorStyle: const TextStyle(
                                     color: Colors.redAccent, fontSize: 8),
+                                filled: isInputLocked,
+                                fillColor:
+                                    isInputLocked ? Colors.grey.shade200 : null,
                               ),
                               dropdownColor: Colors.white,
                               value: revealIndex == -1 ? null : revealIndex,
-                              hint: const Text('選択',
-                                  style: TextStyle(fontSize: 12)),
-                              icon: const Icon(Icons.arrow_drop_down,
-                                  color: Colors.blueGrey, size: 20),
+                              hint: Text(
+                                '選択',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: isInputLocked ? Colors.grey : null,
+                                ),
+                              ),
+                              icon: Icon(
+                                Icons.arrow_drop_down,
+                                color: isInputLocked
+                                    ? Colors.grey
+                                    : Colors.blueGrey,
+                                size: 20,
+                              ),
                               items: allMembers
                                   .map<DropdownMenuItem<int>>((Member member) {
                                 return DropdownMenuItem<int>(
                                   value: member.index,
                                   child: Text(
                                     member.name,
-                                    style: const TextStyle(
-                                        color: Colors.black87, fontSize: 12),
+                                    style: TextStyle(
+                                        color: isInputLocked
+                                            ? Colors.grey.shade600
+                                            : Colors.black87,
+                                        fontSize: 12),
                                   ),
                                 );
                               }).toList(),
-                              onChanged: (newRevealIndex) {
-                                setState(() {
-                                  revealIndex = newRevealIndex!;
-                                });
-                              },
+                              onChanged: isInputLocked
+                                  ? null
+                                  : (newRevealIndex) {
+                                      setState(() {
+                                        revealIndex = newRevealIndex!;
+                                      });
+                                    },
                             ),
                           ),
                         ),
@@ -335,13 +354,26 @@ class _CouplingPageState extends State<CouplingPage>
                                     horizontal: 8, vertical: 8),
                                 errorStyle: const TextStyle(
                                     color: Colors.redAccent, fontSize: 8),
+                                filled: isInputLocked,
+                                fillColor:
+                                    isInputLocked ? Colors.grey.shade200 : null,
                               ),
                               dropdownColor: Colors.white,
                               value: direction,
-                              hint: const Text('？',
-                                  style: TextStyle(fontSize: 12)),
-                              icon: const Icon(Icons.arrow_drop_down,
-                                  color: Colors.blueGrey, size: 20),
+                              hint: Text(
+                                '？',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: isInputLocked ? Colors.grey : null,
+                                ),
+                              ),
+                              icon: Icon(
+                                Icons.arrow_drop_down,
+                                color: isInputLocked
+                                    ? Colors.grey
+                                    : Colors.blueGrey,
+                                size: 20,
+                              ),
                               items: ["からの", "への"]
                                   .map<DropdownMenuItem<String>>(
                                       (String direction) {
@@ -349,16 +381,21 @@ class _CouplingPageState extends State<CouplingPage>
                                   value: direction,
                                   child: Text(
                                     direction,
-                                    style: const TextStyle(
-                                        color: Colors.black87, fontSize: 12),
+                                    style: TextStyle(
+                                        color: isInputLocked
+                                            ? Colors.grey.shade600
+                                            : Colors.black87,
+                                        fontSize: 12),
                                   ),
                                 );
                               }).toList(),
-                              onChanged: (newDirection) {
-                                setState(() {
-                                  direction = newDirection!;
-                                });
-                              },
+                              onChanged: isInputLocked
+                                  ? null
+                                  : (newDirection) {
+                                      setState(() {
+                                        direction = newDirection!;
+                                      });
+                                    },
                             ),
                           ),
                         ),
@@ -469,9 +506,9 @@ class _CouplingPageState extends State<CouplingPage>
         return const Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text('気持ちを',
+            Text('次の人を',
                 style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
-            Text('確認する♡',
+            Text('確認する',
                 style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
           ],
         );
@@ -522,6 +559,7 @@ class _CouplingPageState extends State<CouplingPage>
                   WidgetsBinding.instance.addPostFrameCallback((_) {
                     if (mounted) {
                       setState(() {
+                        isInputLocked = true; // 入力をロック
                         matchedLoves = allLoves
                             .where((Love love) => direction == "からの"
                                 ? love.fromIndex == revealIndex
@@ -679,7 +717,7 @@ class _CouplingPageState extends State<CouplingPage>
                 if (mounted) {
                   setState(() {
                     isOpened = false;
-                    currentPhase = 2; // 次は新規確認フェーズ
+                    currentPhase = 2; // 次は「次の人を確認する」フェーズ
                   });
                 }
               },
@@ -695,9 +733,12 @@ class _CouplingPageState extends State<CouplingPage>
     setState(() {
       currentPhase = 0;
       revealIndex = -1;
+      direction = "からの";
       isOpened = false;
+      isInputLocked = false; // 入力ロックを解除
       lines.clear();
       matchedLoves.clear();
+      _controller.reset(); // アニメーションもリセット
     });
   }
 }
