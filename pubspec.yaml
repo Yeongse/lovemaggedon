@@ -71,6 +71,8 @@ flutter:
     - assets/home.png
     - assets/background.png
     - assets/background2.png
+    - assets/male_sample.png
+    - assets/female_sanple.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
@@ -102,3 +104,6 @@ flutter_icons:
   android: "launcher_icon"
   ios: true
   image_path: "assets/icon.png"
+
+dependency_overrides:
+  win32: ^5.14.0

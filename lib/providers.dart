@@ -9,3 +9,6 @@ final cameraProvider = FutureProvider<CameraDescription>((ref) async {
   return cameras[1];
 });
 final membersProvider = StateProvider<List<Member>>((ref) => []);
+
+// テストモード: エミュレータでカメラなし進行を可能にするフラグ
+final isTestModeProvider = StateProvider<bool>((ref) => false);

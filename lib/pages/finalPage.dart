@@ -55,24 +55,20 @@ class FinalPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Consumer(builder: (context, ref, child) {
-      final deviceSize = MediaQuery.of(context).size;
       final allMembers = ref.watch(membersProvider);
       List<List<Member>> allCouples = getCouples(allMembers);
 
       List<Widget> initialComponents = [
-        const SizedBox(height: 80),
-        const Center(
-          child: Text(
-            '今回成立したのは...',
-            style: TextStyle(
-              fontSize: 24.0,
-              fontWeight: FontWeight.w600,
-              color: Colors.black54,
-            ),
-            textAlign: TextAlign.center,
+        const Text(
+          '今回成立したのは...',
+          style: TextStyle(
+            fontSize: 24.0,
+            fontWeight: FontWeight.w600,
+            color: Colors.black54,
           ),
+          textAlign: TextAlign.center,
         ),
-        const SizedBox(height: 24)
+        const SizedBox(height: 30),
       ];
 
       List<Widget> coupleComponents = allCouples.isEmpty
@@ -130,20 +126,15 @@ class FinalPage extends StatelessWidget {
                     TextButton(
                       child: const Text('OK'),
                       onPressed: () {
-                        ref
-                            .read(memberNumProvider.notifier)
-                            .update((state) => 0);
-                        ref
-                            .read(memberIndexProvider.notifier)
-                            .update((state) => 0);
-                        ref
-                            .read(membersProvider.notifier)
-                            .update((state) => []);
-                        Navigator.push(
-                          context,
+                        ref.read(memberNumProvider.notifier).state = 0;
+                        ref.read(memberIndexProvider.notifier).state = 0;
+                        ref.read(membersProvider.notifier).state = [];
+                        ref.read(isTestModeProvider.notifier).state = false;
+                        Navigator.of(context).pushAndRemoveUntil(
                           MaterialPageRoute(
                               builder: (context) =>
                                   const HomePage(title: 'ドキドキマッチング！！')),
+                          (route) => false,
                         );
                       },
                     ),
@@ -162,17 +153,21 @@ class FinalPage extends StatelessWidget {
 
       return Scaffold(
         body: Container(
-          height: deviceSize.height,
           decoration: const BoxDecoration(
             image: DecorationImage(
               image: AssetImage("assets/background.png"),
               fit: BoxFit.cover,
             ),
           ),
-          child: SingleChildScrollView(
-            scrollDirection: Axis.vertical,
-            padding: const EdgeInsets.all(20.0), // 全体の余白を追加
-            child: Column(children: bodyComponents),
+          child: Center(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(20.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: bodyComponents,
+              ),
+            ),
           ),
         ),
       );
@@ -201,7 +196,9 @@ Widget _buildRoundedImage(Size deviceSize, String imagePath) {
     decoration: BoxDecoration(
       borderRadius: BorderRadius.circular(20.0), // ここで角をフィレットに
       image: DecorationImage(
-        image: FileImage(File(imagePath)),
+        image: imagePath.startsWith('assets/')
+            ? AssetImage(imagePath) as ImageProvider
+            : FileImage(File(imagePath)),
         fit: BoxFit.cover,
       ),
     ),
