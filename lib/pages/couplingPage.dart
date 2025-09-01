@@ -125,6 +125,7 @@ class _CouplingPageState extends State<CouplingPage>
   late List<GlobalKey> globalKeys;
   late List<Love> allLoves;
   late List<Member> allMembers;
+  final GlobalKey _customPaintKey = GlobalKey();
 
   @override
   void initState() {
@@ -230,6 +231,7 @@ class _CouplingPageState extends State<CouplingPage>
                             ],
                           ),
                           child: CustomPaint(
+                            key: _customPaintKey,
                             painter: MultiLinePainter(
                                 lines: lines, progress: _animation.value),
                             child: Padding(
@@ -617,26 +619,51 @@ class _CouplingPageState extends State<CouplingPage>
                                 globalKeys[love.toIndex]
                                     .currentContext!
                                     .findRenderObject() as RenderBox;
-                            final topLeftPositionFrom =
+                            final RenderBox customPaintRenderBox =
+                                _customPaintKey.currentContext!
+                                    .findRenderObject() as RenderBox;
+
+                            // CustomPaint領域でのグローバル座標を取得
+                            final customPaintGlobalPosition =
+                                customPaintRenderBox.localToGlobal(Offset.zero);
+
+                            // 各要素のグローバル座標を取得
+                            final fromGlobalPosition =
                                 renderBoxFrom.localToGlobal(Offset.zero);
-                            final topLeftPositionTo =
+                            final toGlobalPosition =
                                 renderBoxTo.localToGlobal(Offset.zero);
+
+                            // CustomPaint内での相対座標に変換
+                            final fromRelativePosition = Offset(
+                              fromGlobalPosition.dx -
+                                  customPaintGlobalPosition.dx,
+                              fromGlobalPosition.dy -
+                                  customPaintGlobalPosition.dy,
+                            );
+                            final toRelativePosition = Offset(
+                              toGlobalPosition.dx -
+                                  customPaintGlobalPosition.dx,
+                              toGlobalPosition.dy -
+                                  customPaintGlobalPosition.dy,
+                            );
+
+                            // 要素の中心点を計算
                             final centerPositionFrom =
-                                topLeftPositionFrom.translate(
+                                fromRelativePosition.translate(
                               renderBoxFrom.size.width / 2,
                               renderBoxFrom.size.height / 2,
                             );
                             final centerPositionTo =
-                                topLeftPositionTo.translate(
+                                toRelativePosition.translate(
                               renderBoxTo.size.width / 2,
                               renderBoxTo.size.height / 2,
                             );
 
                             return Line(
                                 startX: centerPositionFrom.dx,
-                                startY: centerPositionFrom.dy - 102 + 100 + 2,
+                                startY: centerPositionFrom.dy,
                                 endX: centerPositionTo.dx,
-                                endY: centerPositionTo.dy - 102 + 100 + 2);
+                                endY: centerPositionTo.dy);
                           }).toList();
                           _controller.forward(from: 0);
                           currentPhase = 1; // 次は結果確認フェーズ
