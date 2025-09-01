@@ -186,7 +186,7 @@ class _CouplingPageState extends State<CouplingPage>
           ),
           child: Column(children: [
             // 上部余白
-            const SizedBox(height: 20.0),
+            const SizedBox(height: 40.0),
             // スクロール可能な線描画エリア（画面の80%）
             Container(
               height: deviceSize.height * 0.8,
