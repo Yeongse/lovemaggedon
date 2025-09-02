@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import './guidePage.dart';
 import '../providers.dart';
+import '../widgets/ad_banner_footer.dart';
 
 class SettingPage extends StatefulWidget {
   const SettingPage({Key? key}) : super(key: key);
@@ -120,6 +121,7 @@ class _SettingPageState extends State<SettingPage> {
             ),
           ),
         ),
+        bottomNavigationBar: const AdBannerFooter(),
       );
     });
   }

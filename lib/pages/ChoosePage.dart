@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/member.dart';
 import '../providers.dart';
 import './matchGuidePage.dart';
+import '../widgets/ad_banner_footer.dart';
 
 class LargeMemberRadioComponent extends StatefulWidget {
   final Member member;
@@ -256,6 +257,7 @@ class _ChoosePageState extends State<ChoosePage> {
             ),
           ),
         ),
+        bottomNavigationBar: const AdBannerFooter(),
       );
     });
   }

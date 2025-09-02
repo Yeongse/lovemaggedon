@@ -4,6 +4,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers.dart';
 import './notPlayablePage.dart';
+import '../widgets/ad_banner_footer.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({Key? key, required this.title}) : super(key: key);
@@ -138,6 +139,7 @@ class HomePage extends StatelessWidget {
             ),
           ),
         ),
+        bottomNavigationBar: const AdBannerFooter(),
       );
     });
   }

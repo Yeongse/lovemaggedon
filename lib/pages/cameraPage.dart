@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'homePage.dart';
 import '../providers.dart';
 import 'package:permission_handler/permission_handler.dart';
+import '../widgets/ad_banner_footer.dart';
 
 class CameraPage extends StatefulWidget {
   const CameraPage({super.key, required this.camera});
@@ -117,6 +118,7 @@ class CameraPageState extends State<CameraPage> {
                   ],
                 ),
               ),
+              bottomNavigationBar: const AdBannerFooter(),
             )
           : Scaffold(
               body: Container(
@@ -184,6 +186,7 @@ class CameraPageState extends State<CameraPage> {
                 },
                 child: const Icon(Icons.camera_alt),
               ),
+              bottomNavigationBar: const AdBannerFooter(),
             );
     });
   }

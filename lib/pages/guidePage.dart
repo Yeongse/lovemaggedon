@@ -4,6 +4,7 @@ import '../providers.dart';
 import './cameraPage.dart';
 import './allMembersPage.dart';
 import './registerPage.dart';
+import '../widgets/ad_banner_footer.dart';
 
 class GuidePage extends StatelessWidget {
   const GuidePage({Key? key}) : super(key: key);
@@ -66,6 +67,7 @@ class GuidePage extends StatelessWidget {
               ),
             ),
           ),
+          bottomNavigationBar: const AdBannerFooter(),
         );
       }
 

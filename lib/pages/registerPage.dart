@@ -4,6 +4,7 @@ import 'dart:io';
 import '../models/member.dart';
 import '../providers.dart';
 import './guidePage.dart';
+import '../widgets/ad_banner_footer.dart';
 
 class RegisterPage extends StatefulWidget {
   final String imagePath;
@@ -283,7 +284,8 @@ class _RegisterPageState extends State<RegisterPage> {
                 )),
               ),
             ),
-          ));
+          ),
+          bottomNavigationBar: const AdBannerFooter());
     });
   }
 }

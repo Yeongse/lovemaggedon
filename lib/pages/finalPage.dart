@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/member.dart';
 import '../providers.dart';
 import 'homePage.dart';
+import '../widgets/ad_banner_footer.dart';
 
 // coupleの長さは絶対に2
 class CoupleComponent extends StatelessWidget {
@@ -170,6 +171,7 @@ class FinalPage extends StatelessWidget {
             ),
           ),
         ),
+        bottomNavigationBar: const AdBannerFooter(),
       );
     });
   }

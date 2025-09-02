@@ -5,6 +5,7 @@ import '../models/member.dart';
 import '../providers.dart';
 import './matchGuidePage.dart';
 import './notPlayablePage.dart';
+import '../widgets/ad_banner_footer.dart';
 
 class MemberComponent extends StatelessWidget {
   final Member member;
@@ -275,6 +276,7 @@ class AllMembersPage extends StatelessWidget {
             ),
           ),
         ),
+        bottomNavigationBar: const AdBannerFooter(),
       );
     });
   }
