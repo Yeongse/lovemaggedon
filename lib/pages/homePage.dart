@@ -95,7 +95,7 @@ class HomePage extends StatelessWidget {
                               builder: (context) => const NotPlayablePage(
                                 title: 'カメラ権限が必要です',
                                 message:
-                                    'カメラへのアクセス許可がないため、プレイできません。\\n設定からカメラを許可して、ホームに戻ってやり直してね。',
+                                    'カメラへのアクセス許可がないからプレイできないよ。設定からカメラを許可して、ホームに戻ってやり直してね。',
                               ),
                             ),
                           );
@@ -104,36 +104,36 @@ class HomePage extends StatelessWidget {
                     );
                   }),
                   const SizedBox(height: 12.0),
-                  Consumer(builder: (context, ref, _) {
-                    return ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blueGrey,
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 50, vertical: 15),
-                        textStyle: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                        ),
-                      ),
-                      child: const Text('テストモードでスタート'),
-                      onPressed: () {
-                        // 新規プレイ開始前に状態を初期化
-                        ref.read(memberNumProvider.notifier).state = 0;
-                        ref.read(memberIndexProvider.notifier).state = 0;
-                        ref.read(membersProvider.notifier).state = [];
-                        ref.read(isTestModeProvider.notifier).state = true;
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const SettingPage()),
-                        );
-                      },
-                    );
-                  }),
+                  // Consumer(builder: (context, ref, _) {
+                  //   return ElevatedButton(
+                  //     style: ElevatedButton.styleFrom(
+                  //       backgroundColor: Colors.blueGrey,
+                  //       foregroundColor: Colors.white,
+                  //       padding: const EdgeInsets.symmetric(
+                  //           horizontal: 50, vertical: 15),
+                  //       textStyle: const TextStyle(
+                  //         fontSize: 16,
+                  //         fontWeight: FontWeight.bold,
+                  //       ),
+                  //       shape: RoundedRectangleBorder(
+                  //         borderRadius: BorderRadius.circular(10.0),
+                  //       ),
+                  //     ),
+                  //     child: const Text('テストモードでスタート'),
+                  //     onPressed: () {
+                  //       // 新規プレイ開始前に状態を初期化
+                  //       ref.read(memberNumProvider.notifier).state = 0;
+                  //       ref.read(memberIndexProvider.notifier).state = 0;
+                  //       ref.read(membersProvider.notifier).state = [];
+                  //       ref.read(isTestModeProvider.notifier).state = true;
+                  //       Navigator.push(
+                  //         context,
+                  //         MaterialPageRoute(
+                  //             builder: (context) => const SettingPage()),
+                  //       );
+                  //     },
+                  //   );
+                  // }),
                 ],
               ),
             ),
