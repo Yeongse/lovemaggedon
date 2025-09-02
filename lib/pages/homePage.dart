@@ -73,8 +73,25 @@ class HomePage extends StatelessWidget {
                       ),
                       child: const Text('スタート'),
                       onPressed: () async {
-                        final PermissionStatus status =
+                        PermissionStatus status =
                             await Permission.camera.status;
+                        debugPrint('Initial camera permission status: $status');
+
+                        // 権限が付与されていない場合は必ず権限を要求
+                        if (!status.isGranted) {
+                          debugPrint('Requesting camera permission...');
+                          status = await Permission.camera.request();
+                          debugPrint('Permission request result: $status');
+
+                          // 権限要求後の最新状態を再取得
+                          await Future.delayed(
+                              const Duration(milliseconds: 500));
+                          status = await Permission.camera.status;
+                          debugPrint('Final status after delay: $status');
+                        }
+
+                        // 権限が付与されているかチェック
+                        debugPrint('Final camera permission status: $status');
                         if (status.isGranted) {
                           // 新規プレイ開始前に状態を初期化
                           ref.read(memberNumProvider.notifier).state = 0;
@@ -88,14 +105,23 @@ class HomePage extends StatelessWidget {
                                 builder: (context) => const SettingPage()),
                           );
                         } else {
+                          // 権限が拒否された場合の処理
+                          if (status.isPermanentlyDenied) {
+                            // 設定アプリを開く
+                            await openAppSettings();
+                          }
+
+                          String message = status.isPermanentlyDenied
+                              ? 'カメラへのアクセス許可が拒否されています。\n設定アプリでカメラ権限を許可してから、アプリに戻ってください。'
+                              : 'カメラへのアクセス許可がないからプレイできないよ。\n設定からカメラを許可して、ホームに戻ってやり直してね。';
+
                           // ignore: use_build_context_synchronously
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => const NotPlayablePage(
+                              builder: (context) => NotPlayablePage(
                                 title: 'カメラ権限が必要です',
-                                message:
-                                    'カメラへのアクセス許可がないからプレイできないよ。設定からカメラを許可して、ホームに戻ってやり直してね。',
+                                message: message,
                               ),
                             ),
                           );

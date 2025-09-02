@@ -23,22 +23,25 @@ class CameraPageState extends State<CameraPage> {
 
   Future<void> _checkCameraPermission() async {
     PermissionStatus status = await Permission.camera.status;
-    if (status == PermissionStatus.denied ||
-        status == PermissionStatus.permanentlyDenied) {
-      print('Before requesting permission, status=$status');
-      PermissionStatus newStatus = await Permission.camera.request();
-      print(newStatus);
-      status = await Permission.camera.status;
-      print('After requesting permission, status=$status');
+
+    // 権限が未決定または拒否されている場合は権限を要求
+    if (status.isDenied || status.isRestricted) {
+      debugPrint('Requesting camera permission, current status: $status');
+      status = await Permission.camera.request();
+      debugPrint('Permission request result: $status');
     }
+
+    // 最終的な権限状態をチェック
     if (status.isGranted) {
       setState(() {
         _cameraPermissionDenied = false;
       });
+      debugPrint('Camera permission granted');
     } else {
       setState(() {
         _cameraPermissionDenied = true;
       });
+      debugPrint('Camera permission denied: $status');
     }
   }
 
