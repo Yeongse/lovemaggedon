@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers.dart';
 import './homePage.dart';
+import '../widgets/ad_banner_footer.dart';
 
 class NotPlayablePage extends StatelessWidget {
   final String title;
@@ -83,6 +84,7 @@ class NotPlayablePage extends StatelessWidget {
             ),
           ),
         ),
+        bottomNavigationBar: const AdBannerFooter(),
       );
     });
   }
