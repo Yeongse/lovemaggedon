@@ -7,6 +7,7 @@ import 'homePage.dart';
 import '../providers.dart';
 import 'package:permission_handler/permission_handler.dart';
 import '../widgets/ad_banner_footer.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 class CameraPage extends StatefulWidget {
   const CameraPage({super.key, required this.camera});
@@ -135,30 +136,61 @@ class CameraPageState extends State<CameraPage> {
                   future: _initializeControllerFuture,
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.done) {
-                      return Stack(
+                      final mediaQuery = MediaQuery.of(context);
+                      final double screenHeight = mediaQuery.size.height;
+                      final double bottomPadding = mediaQuery.padding.bottom;
+                      // バナー広告の想定高さ（ロード前でも確保）
+                      final double adHeight = AdSize.banner.height.toDouble();
+                      // FABとテキストのための余白を十分に確保
+                      const double fabAndTextReserve = 120.0; // ボタン+テキスト分
+                      final double maxCameraHeight = screenHeight -
+                          adHeight -
+                          bottomPadding -
+                          fabAndTextReserve;
+
+                      // 撮影プレビューと同一のアスペクト比で描画する
+                      final Size? previewSize = _controller.value.previewSize;
+                      final bool isPortrait =
+                          mediaQuery.orientation == Orientation.portrait;
+                      final double aspect = previewSize != null
+                          ? (isPortrait
+                              ? previewSize.height / previewSize.width
+                              : previewSize.width / previewSize.height)
+                          : (isPortrait
+                              ? 1 / _controller.value.aspectRatio
+                              : _controller.value.aspectRatio);
+
+                      return Column(
                         children: [
-                          CameraPreview(_controller),
-                          Positioned(
-                            bottom: 10.0,
-                            child: Container(
-                              width: MediaQuery.of(context).size.width,
-                              alignment: Alignment.center,
-                              child: const Text(
-                                '自撮りをしてね',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 18.0,
-                                  shadows: [
-                                    Shadow(
-                                      blurRadius: 6.0,
-                                      color: Colors.black,
-                                      offset: Offset(0, 2),
-                                    ),
-                                  ],
-                                ),
+                          // カメラ領域（高さ上限あり、横方向は余白可）
+                          ConstrainedBox(
+                            constraints: BoxConstraints(
+                              maxHeight: maxCameraHeight.clamp(0, screenHeight),
+                            ),
+                            child: Center(
+                              child: AspectRatio(
+                                aspectRatio: aspect,
+                                child: CameraPreview(_controller),
                               ),
                             ),
                           ),
+                          const SizedBox(height: 8.0),
+                          const Text(
+                            '自撮りをしてね',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 18.0,
+                              shadows: [
+                                Shadow(
+                                  blurRadius: 6.0,
+                                  color: Colors.black,
+                                  offset: Offset(0, 2),
+                                ),
+                              ],
+                            ),
+                          ),
+                          // 残りは自然に埋める
+                          const Spacer(),
                         ],
                       );
                     } else {
